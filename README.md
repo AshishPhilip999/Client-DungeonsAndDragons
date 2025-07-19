@@ -7,5 +7,5 @@ This is pretty easy.
 5) And that's it :)
 
 # Runing the Dungeons And Dragons project
-1) For right now, you need a server to generate terrains. So, go to this repository and clone it.
+1) For right now, you need a server to generate terrains. So, go to this [repository](https://github.com/AshishPhilip999/Server-DungeonsAndDragons) and clone it.
 2) Read the readme file for this repo on how to get the server running.
