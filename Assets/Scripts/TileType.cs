@@ -24,11 +24,11 @@ namespace Dnd.Terrain {
     static TileTypeReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg5UaWxlVHlwZS5wcm90bxILRG5kLlRlcnJhaW4qeAoIVGlsZVR5cGUSEgoO",
-            "U1RBTkRBUkRfR1JBU1MQABIVChFMSUdIVF9QQVRDSF9HUkFTUxABEhQKEERB",
-            "UktfUEFUQ0hfR1JBU1MQAhIRCg1TVEFOREFSRF9UUkVFEAMSCAoEUk9DSxAE",
-            "Eg4KCkdJQU5UX1JPQ0sQBUIhCgtEbkQuVGVycmFpbkISVGlsZVR5cGVPdXRl",
-            "ckNsYXNzYgZwcm90bzM="));
+            "Cg5UaWxlVHlwZS5wcm90bxILRG5kLlRlcnJhaW4qiAEKCFRpbGVUeXBlEhIK",
+            "DlNUQU5EQVJEX0dSQVNTEAASFQoRTElHSFRfUEFUQ0hfR1JBU1MQARIUChBE",
+            "QVJLX1BBVENIX0dSQVNTEAISEQoNU1RBTkRBUkRfVFJFRRADEggKBFJPQ0sQ",
+            "BBIOCgpHSUFOVF9ST0NLEAUSDgoKV0FURVJfQk9EWRAGQiEKC0RuRC5UZXJy",
+            "YWluQhJUaWxlVHlwZU91dGVyQ2xhc3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Dnd.Terrain.TileType), }, null, null));
@@ -44,6 +44,7 @@ namespace Dnd.Terrain {
     [pbr::OriginalName("STANDARD_TREE")] StandardTree = 3,
     [pbr::OriginalName("ROCK")] Rock = 4,
     [pbr::OriginalName("GIANT_ROCK")] GiantRock = 5,
+    [pbr::OriginalName("WATER_BODY")] WaterBody = 6,
   }
 
   #endregion

@@ -39,7 +39,7 @@ public class ServerConnection
             int localPort = -1;
 
             ClientRequest clientRequest = new ClientRequest();
-            clientRequest.RequestType = ClientRequestType.ClientConnection;
+            clientRequest.ReqType = ClientRequestType.ClientConnection;
 
             Client client = new Client();
             client.PortNumber = localPort;

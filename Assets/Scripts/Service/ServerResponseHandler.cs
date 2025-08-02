@@ -26,6 +26,11 @@ public class ServerResponseHandler
 
                 handleTerrainGenerationResponse(terrains);
                 break;
+
+            case ServerResponseType.PlayerUpdate:
+                Client client = DnD.Service.Client.Parser.ParseFrom(response.ResponseData);
+                ServerConnectivityInstance.clientsHandler.updatePlayerData(client);
+                break;
         }
     }
 
