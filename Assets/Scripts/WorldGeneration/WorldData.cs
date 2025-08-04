@@ -16,7 +16,7 @@ public class WorldData
     {
         if (terrainExists(terrain)) { Debug.Log("[World Data] Terrain already exists"); PlayerMovement.isMoving = true; return; }
 
-        popFarthestTerrain();
+        //popFarthestTerrain();
 
         terrainData.Add(terrain);
         Debug.LogWarning("[World Data] Terrain Added. x:" + terrain.PosX + ", y:" + terrain.PosY);
@@ -45,7 +45,7 @@ public class WorldData
 
     public static void popFarthestTerrain()
     {
-        float maxDistance = 250.0f;
+        float maxDistance = 750.0f;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         var terrainsToRemove = terrainData
