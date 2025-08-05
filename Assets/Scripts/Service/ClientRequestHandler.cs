@@ -22,7 +22,7 @@ public class ClientRequestHandler
     {
         Debug.Log("[Client Request Handler] Getting terrain Data");
         ClientRequest request = new ClientRequest();
-        request.RequestType = ClientRequestType.TileGenerationRequest;
+        request.ReqType = ClientRequestType.TileGeneration;
 
         Player player = ServerConnectivityInstance.service.localGameCLient.Player;
         Player playerData = new Player();
@@ -42,6 +42,25 @@ public class ClientRequestHandler
 
         Client client = ServerConnectivityInstance.service.localGameCLient;
         client.Player = playerData;
+
+        byte[] clientData = client.ToByteArray();
+        request.RequestData = ByteString.CopyFrom(clientData);
+
+        sendRequest(request);
+    }
+
+    public static void updatePlayerData(float posX, float posY)
+    {
+        Debug.Log("[Client Request Handler] Updating player Data");
+        ClientRequest request = new ClientRequest();
+        request.ReqType = ClientRequestType.ClientUpdate;
+
+        Player player = ServerConnectivityInstance.service.localGameCLient.Player;
+        player.PosX = posX;
+        player.PosY = posY;
+
+        Client client = ServerConnectivityInstance.service.localGameCLient;
+        client.Player = player;
 
         byte[] clientData = client.ToByteArray();
         request.RequestData = ByteString.CopyFrom(clientData);

@@ -22,19 +22,6 @@ public class ServerListener
         Debug.Log("[Server Listener] Started Listening");
         if(stream != null)
         {
-            //IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            //while (true)
-            //{
-            //    byte[] serverResponseData = client.Receive(ref remoteEndPoint);
-            //    //Debug.Log("[Server] Recieved response from server");
-
-            //    ServerResponse serverResponse = ServerResponse.Parser.ParseFrom(serverResponseData);
-
-            //    MainThreadDispatch.RunOnMainThread(() => {
-            //        ServerResponseHandler.handleResponse(serverResponse);
-            //    });
-            //}
-
             while (true)
             {
                 try

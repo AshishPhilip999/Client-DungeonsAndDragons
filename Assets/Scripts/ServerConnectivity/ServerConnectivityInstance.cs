@@ -4,8 +4,11 @@ using Google.Protobuf;
 
 public class ServerConnectivityInstance : MonoBehaviour
 {
+    public GameObject defaultPlayer;
+
     public static ServerConnection service;
     public static Transform player;
+    public static ClientsHandler clientsHandler;
 
     public ViewDistanceController viewDistanceController;
 
@@ -21,6 +24,10 @@ public class ServerConnectivityInstance : MonoBehaviour
         service = serverConnection;
 
         ServerListener.tg = tg;
+
+        clientsHandler = new ClientsHandler();
+        clientsHandler.defaultPlayerPlaceHolder = defaultPlayer;
+
         ServerListener.Listen(serverConnection.netWorkStream);
     }
 }

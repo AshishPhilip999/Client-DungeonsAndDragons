@@ -301,6 +301,8 @@ public class PlayerView : MonoBehaviour
                 return tiles[4];
             case TileType.GiantRock:
                 return tiles[5];
+            case TileType.WaterBody:
+                return tiles[6];
             default:
                 return null;
         }

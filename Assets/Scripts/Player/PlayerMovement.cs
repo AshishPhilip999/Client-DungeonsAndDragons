@@ -39,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
         {
             moveAlongX();
             moveAlongY();
+            ClientRequestHandler.updatePlayerData(transform.position.x, transform.position.y);
             if (distance > 0.25f)
             {
                 isMoving = false;
