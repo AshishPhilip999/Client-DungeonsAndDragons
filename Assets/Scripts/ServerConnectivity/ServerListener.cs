@@ -20,13 +20,13 @@ public class ServerListener
     private static void startListening(NetworkStream stream)
     {
         Debug.Log("[Server Listener] Started Listening");
-        if(stream != null)
+        if (stream != null)
         {
             while (true)
             {
                 try
                 {
-                    Debug.Log("[Server Listener] Reading 4 bytes");
+                    //Debug.Log("[Server Listener] Reading 4 bytes");
                     byte[] lengthBuffer = new byte[4];
                     int read = stream.Read(lengthBuffer, 0, 4);
 
@@ -64,15 +64,12 @@ public class ServerListener
                     if (totalRead == messageLength)
                     {
                         ServerResponse serverResponse = ServerResponse.Parser.ParseFrom(messageBuffer);
-                        Debug.Log("[Server Listener] Received response from server");
-
-                        MainThreadDispatch.RunOnMainThread(() =>
-                        {
-                            ServerResponseHandler.handleResponse(serverResponse);
-                        });
+                        //Debug.Log("[Server Listener] Received response from server");
+                        ServerResponseHandler.handleResponse(serverResponse);
+                        
                     } else
                     {
-                        Debug.Log("[Server Listener] Total Read is not equal to messageLength");
+                        //Debug.Log("[Server Listener] Total Read is not equal to messageLength");
                     }
 
                 } catch(Exception e)

@@ -24,16 +24,18 @@ namespace DnD.Service {
     static ClientRequestReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChNDbGllbnRSZXF1ZXN0LnByb3RvEgtEbkQuc2VydmljZSJVCg1DbGllbnRS",
-            "ZXF1ZXN0Ei8KB3JlcVR5cGUYASABKA4yHi5EbkQuc2VydmljZS5DbGllbnRS",
-            "ZXF1ZXN0VHlwZRITCgtyZXF1ZXN0RGF0YRgCIAEoDCpSChFDbGllbnRSZXF1",
-            "ZXN0VHlwZRIVChFDTElFTlRfQ09OTkVDVElPThAAEhMKD1RJTEVfR0VORVJB",
-            "VElPThABEhEKDUNMSUVOVF9VUERBVEUQAkImCgtEbkQuc2VydmljZUIXQ2xp",
-            "ZW50UmVxdWVzdE91dGVyQ2xhc3NiBnByb3RvMw=="));
+            "ChNDbGllbnRSZXF1ZXN0LnByb3RvEgtEbkQuc2VydmljZRoMQ2xpZW50LnBy",
+            "b3RvInoKDUNsaWVudFJlcXVlc3QSIwoGY2xpZW50GAEgASgLMhMuRG5ELnNl",
+            "cnZpY2UuQ2xpZW50Ei8KB3JlcVR5cGUYAiABKA4yHi5EbkQuc2VydmljZS5D",
+            "bGllbnRSZXF1ZXN0VHlwZRITCgtyZXF1ZXN0RGF0YRgDIAEoDCpwChFDbGll",
+            "bnRSZXF1ZXN0VHlwZRIVChFDTElFTlRfQ09OTkVDVElPThAAEhMKD1RJTEVf",
+            "R0VORVJBVElPThABEhEKDUNMSUVOVF9VUERBVEUQAhIcChhUSUxFX0lURU1f",
+            "VVBEQVRFX1JFUVVFU1QQA0ImCgtEbkQuc2VydmljZUIXQ2xpZW50UmVxdWVz",
+            "dE91dGVyQ2xhc3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
+          new pbr::FileDescriptor[] { global::DnD.Service.ClientReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::DnD.Service.ClientRequestType), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Service.ClientRequest), global::DnD.Service.ClientRequest.Parser, new[]{ "ReqType", "RequestData" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Service.ClientRequest), global::DnD.Service.ClientRequest.Parser, new[]{ "Client", "ReqType", "RequestData" }, null, null, null, null)
           }));
     }
     #endregion
@@ -44,6 +46,7 @@ namespace DnD.Service {
     [pbr::OriginalName("CLIENT_CONNECTION")] ClientConnection = 0,
     [pbr::OriginalName("TILE_GENERATION")] TileGeneration = 1,
     [pbr::OriginalName("CLIENT_UPDATE")] ClientUpdate = 2,
+    [pbr::OriginalName("TILE_ITEM_UPDATE_REQUEST")] TileItemUpdateRequest = 3,
   }
 
   #endregion
@@ -74,6 +77,7 @@ namespace DnD.Service {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public ClientRequest(ClientRequest other) : this() {
+      client_ = other.client_ != null ? other.client_.Clone() : null;
       reqType_ = other.reqType_;
       requestData_ = other.requestData_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -84,8 +88,19 @@ namespace DnD.Service {
       return new ClientRequest(this);
     }
 
+    /// <summary>Field number for the "client" field.</summary>
+    public const int ClientFieldNumber = 1;
+    private global::DnD.Service.Client client_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::DnD.Service.Client Client {
+      get { return client_; }
+      set {
+        client_ = value;
+      }
+    }
+
     /// <summary>Field number for the "reqType" field.</summary>
-    public const int ReqTypeFieldNumber = 1;
+    public const int ReqTypeFieldNumber = 2;
     private global::DnD.Service.ClientRequestType reqType_ = global::DnD.Service.ClientRequestType.ClientConnection;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::DnD.Service.ClientRequestType ReqType {
@@ -96,7 +111,7 @@ namespace DnD.Service {
     }
 
     /// <summary>Field number for the "requestData" field.</summary>
-    public const int RequestDataFieldNumber = 2;
+    public const int RequestDataFieldNumber = 3;
     private pb::ByteString requestData_ = pb::ByteString.Empty;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public pb::ByteString RequestData {
@@ -119,6 +134,7 @@ namespace DnD.Service {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (!object.Equals(Client, other.Client)) return false;
       if (ReqType != other.ReqType) return false;
       if (RequestData != other.RequestData) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -127,6 +143,7 @@ namespace DnD.Service {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
+      if (client_ != null) hash ^= Client.GetHashCode();
       if (ReqType != global::DnD.Service.ClientRequestType.ClientConnection) hash ^= ReqType.GetHashCode();
       if (RequestData.Length != 0) hash ^= RequestData.GetHashCode();
       if (_unknownFields != null) {
@@ -142,12 +159,16 @@ namespace DnD.Service {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+      if (client_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Client);
+      }
       if (ReqType != global::DnD.Service.ClientRequestType.ClientConnection) {
-        output.WriteRawTag(8);
+        output.WriteRawTag(16);
         output.WriteEnum((int) ReqType);
       }
       if (RequestData.Length != 0) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteBytes(RequestData);
       }
       if (_unknownFields != null) {
@@ -158,6 +179,9 @@ namespace DnD.Service {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
+      if (client_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Client);
+      }
       if (ReqType != global::DnD.Service.ClientRequestType.ClientConnection) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) ReqType);
       }
@@ -174,6 +198,12 @@ namespace DnD.Service {
     public void MergeFrom(ClientRequest other) {
       if (other == null) {
         return;
+      }
+      if (other.client_ != null) {
+        if (client_ == null) {
+          Client = new global::DnD.Service.Client();
+        }
+        Client.MergeFrom(other.Client);
       }
       if (other.ReqType != global::DnD.Service.ClientRequestType.ClientConnection) {
         ReqType = other.ReqType;
@@ -192,11 +222,18 @@ namespace DnD.Service {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
+          case 10: {
+            if (client_ == null) {
+              Client = new global::DnD.Service.Client();
+            }
+            input.ReadMessage(Client);
+            break;
+          }
+          case 16: {
             ReqType = (global::DnD.Service.ClientRequestType) input.ReadEnum();
             break;
           }
-          case 18: {
+          case 26: {
             RequestData = input.ReadBytes();
             break;
           }

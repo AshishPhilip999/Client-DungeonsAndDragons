@@ -19,11 +19,12 @@ public class PlayerView : MonoBehaviour
     public int viewLengthX;
     public int viewLengthY;
 
-    private Dictionary<string, List<GameObject>> viewPositionObjects;
+    public static Dictionary<string, List<GameObject>> viewPositionObjects;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        TerrainHandler.tiles = this.tiles;
         viewPositionObjects = new Dictionary<string, List<GameObject>>();
         viewLengthX = (int)(((viewDistance / tileSize) + 1) * 2) - 1;
         viewLengthY = (int)(((viewDistance / tileSize) + 1) * 2) - 1;
@@ -39,7 +40,7 @@ public class PlayerView : MonoBehaviour
         Vector3[,] newViewData = populateViewData(playerPosition);
         if (isSameViewData(newViewData, playerViewPosData))
         {
-            Debug.Log("[Player View] Same view data generated");
+            //Debug.Log("[Player View] Same view data generated");
             return;
         }
         List<Vector3> newTiles = getDifference(newViewData, playerViewPosData);
@@ -209,6 +210,11 @@ public class PlayerView : MonoBehaviour
             List<GameObject> tileObjects = new List<GameObject>();
 
             string hashCode = getVector3HashCode(tileData);
+            if(!WorldData.worldTileData.ContainsKey(hashCode))
+            {
+                Debug.Log(":: Failed Getting tile at: " + tileData);
+                Debug.Break();
+            }
             Tile tile = WorldData.worldTileData[hashCode];
 
             GameObject instanceTile = getTileFromTileType(tile.Type);
@@ -217,8 +223,14 @@ public class PlayerView : MonoBehaviour
             newTile.isStatic = true;
             newTile.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(tileData.y);
 
-            if (tile.Type == TileType.StandardTree)
+            tileObjects.Add(newTile);
+
+            if (tile.Type == TileType.StandardTree || tile.Type == TileType.GiantRock)
             {
+                /// Updating terrain Positions since it's a TileItem.
+                newTile.GetComponent<TileItem>().terrainPosX = tile.TerrainPosX;
+                newTile.GetComponent<TileItem>().terrainPosY = tile.TerrainPosY;
+
                 GameObject instanceTreeGrass = getTileFromTileType(TileType.LightPatchGrass);
                 GameObject treeGrass = Instantiate(instanceTreeGrass, new Vector3(tileData.x, tileData.y, 0), Quaternion.identity);
                 treeGrass.isStatic = true;
@@ -226,8 +238,6 @@ public class PlayerView : MonoBehaviour
 
                 tileObjects.Add(treeGrass);
             }
-
-            tileObjects.Add(newTile);
 
             addToViewPositionObjects(tileData, tileObjects);            
         }
@@ -254,24 +264,32 @@ public class PlayerView : MonoBehaviour
                 List<GameObject> tileObjects = new List<GameObject>();
 
                 string hashCode = getVector3HashCode(viewData[i, j]);
+                if (!WorldData.worldTileData.ContainsKey(hashCode))
+                {
+                    Debug.Log(":: Failed Getting tile at: " + "x:" + viewLengthX + ", y:" + viewLengthY);
+                    Debug.Break();
+                }
                 Tile tileData = WorldData.worldTileData[hashCode];
 
                 GameObject instanceTile = getTileFromTileType(tileData.Type);
 
-                Debug.Log(viewData[i, j].x + "," + viewData[i, j].y);
                 GameObject currTile = Instantiate(instanceTile, viewData[i,j] , Quaternion.identity);
                 currTile.isStatic = true;
                 currTile.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(viewData[i, j].y);
 
-                if (tileData.Type == TileType.StandardTree)
+                tileObjects.Add(currTile);
+
+                if (tileData.Type == TileType.StandardTree || tileData.Type == TileType.GiantRock)
                 {
+                    /// Updating terrain Positions since it's a TileItem.
+                    currTile.GetComponent<TileItem>().terrainPosX = tileData.TerrainPosX;
+                    currTile.GetComponent<TileItem>().terrainPosY = tileData.TerrainPosY;
+
                     GameObject instanceTreeGrass = getTileFromTileType(TileType.LightPatchGrass);
                     GameObject treeGrass = Instantiate(instanceTreeGrass, viewData[i, j], Quaternion.identity);
                     treeGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(viewData[i, j].y); ;
                     tileObjects.Add(treeGrass);
                 }
-
-                tileObjects.Add(currTile);
 
                 addToViewPositionObjects(viewData[i, j], tileObjects);
             }
@@ -285,7 +303,7 @@ public class PlayerView : MonoBehaviour
         return (int)(yPos / tileSize);
     }
 
-    private GameObject getTileFromTileType(TileType tileType)
+    public  GameObject getTileFromTileType(TileType tileType)
     {
         switch (tileType)
         {
@@ -311,7 +329,7 @@ public class PlayerView : MonoBehaviour
     private List<GameObject> getObjectFromViewPositionObjectsMap(Vector3 position)
     {
         string hashCode = getVector3HashCode(position);
-        if (this.viewPositionObjects.TryGetValue(hashCode, out var obj)) {
+        if (viewPositionObjects.TryGetValue(hashCode, out var obj)) {
             return obj;
         }
 
@@ -322,13 +340,13 @@ public class PlayerView : MonoBehaviour
     private void addToViewPositionObjects(Vector3 position, List<GameObject> tile)
     {
         string hashCode = getVector3HashCode(position);
-        this.viewPositionObjects[hashCode] = tile;
+        viewPositionObjects[hashCode] = tile;
     }
 
     private void removeFromViewPositionObjects(Vector3 position)
     {
         string hashCode = getVector3HashCode(position);
-        this.viewPositionObjects.Remove(hashCode);
+        viewPositionObjects.Remove(hashCode);
     }
 
     public static string getVector3HashCode(Vector3 v)
