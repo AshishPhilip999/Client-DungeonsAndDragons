@@ -495,7 +495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
-  viewDistance: 7
+  viewDistance: 5
   playerView: {fileID: 836440386}
 --- !u!61 &836440392
 BoxCollider2D:
