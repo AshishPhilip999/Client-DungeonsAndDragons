@@ -37,7 +37,7 @@ public class ClientRequestHandler
             currTerrain.PosX = terrain.PosX;
             currTerrain.PosY = terrain.PosY;
 
-            playerData.TerrainData.Add(currTerrain);
+            //playerData.TerrainData.Add(currTerrain);
         }
 
         Client client = ServerConnectivityInstance.service.localGameCLient;
