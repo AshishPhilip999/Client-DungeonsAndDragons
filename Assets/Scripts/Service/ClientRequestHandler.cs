@@ -2,6 +2,7 @@ using UnityEngine;
 using Google.Protobuf;
 using DnD.Player;
 using DnD.Service;
+using DnD.Terrain;
 using System;
 
 public class ClientRequestHandler
@@ -15,12 +16,12 @@ public class ClientRequestHandler
         ServerConnectivityInstance.service.netWorkStream.Write(data, 0, data.Length);
         ServerConnectivityInstance.service.netWorkStream.Flush();
 
-        Debug.Log("[Client Request Handler] Request sent to server");
+        //Debug.Log("[Client Request Handler] Request sent to server");
     }
 
     public static void getTerrainData(float posX, float posY, int viewDistance)
     {
-        Debug.Log("[Client Request Handler] Getting terrain Data");
+        //Debug.Log("[Client Request Handler] Getting terrain Data");
         ClientRequest request = new ClientRequest();
         request.ReqType = ClientRequestType.TileGeneration;
 
@@ -43,6 +44,8 @@ public class ClientRequestHandler
         Client client = ServerConnectivityInstance.service.localGameCLient;
         client.Player = playerData;
 
+        request.Client = client;
+
         byte[] clientData = client.ToByteArray();
         request.RequestData = ByteString.CopyFrom(clientData);
 
@@ -51,7 +54,7 @@ public class ClientRequestHandler
 
     public static void updatePlayerData(float posX, float posY)
     {
-        Debug.Log("[Client Request Handler] Updating player Data");
+        //Debug.Log("[Client Request Handler] Updating player Data");
         ClientRequest request = new ClientRequest();
         request.ReqType = ClientRequestType.ClientUpdate;
 
@@ -64,6 +67,29 @@ public class ClientRequestHandler
 
         byte[] clientData = client.ToByteArray();
         request.RequestData = ByteString.CopyFrom(clientData);
+
+        sendRequest(request);
+    }
+
+    public static void updateTileItemData(TileItem tileItem)
+    {
+        ClientRequest request = new ClientRequest();
+        request.ReqType = ClientRequestType.TileItemUpdateRequest;
+
+        TileItemData tileItemData = new TileItemData();
+
+        tileItemData.Type = TileItemDataType.Delete;
+
+        tileItemData.PosX = tileItem.tilePosX;
+        tileItemData.PosY = tileItem.tilePosY;
+        tileItemData.TerrainPosX = tileItem.terrainPosX;
+        tileItemData.TerrainPosY = tileItem.terrainPosY;
+
+        byte[] tileItemDataBytes = tileItemData.ToByteArray();
+
+        request.Client = ServerConnectivityInstance.service.localGameCLient;
+
+        request.RequestData = ByteString.CopyFrom(tileItemDataBytes);
 
         sendRequest(request);
     }

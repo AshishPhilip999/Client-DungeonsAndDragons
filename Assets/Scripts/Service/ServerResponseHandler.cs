@@ -1,5 +1,6 @@
 using UnityEngine;
 using DnD.Service;
+using DnD.Terrain;
 using Google.Protobuf;
 using System.Linq;
 using System.Collections.Generic;
@@ -14,10 +15,12 @@ public class ServerResponseHandler
         {
             case ServerResponseType.ConnectionSuccess:
                 Debug.Log("[Server Response Handler] Connection Success");
-
-                Transform player = ServerConnectivityInstance.player;
-                ViewDistanceController viewDistanceController = player.GetComponent<ViewDistanceController>();
-                ClientRequestHandler.getTerrainData(player.position.x, player.position.y, viewDistanceController.viewDistance);
+                MainThreadDispatch.RunOnMainThread(() =>
+                {
+                    Transform player = ServerConnectivityInstance.player;
+                    ViewDistanceController viewDistanceController = player.GetComponent<ViewDistanceController>();
+                    ClientRequestHandler.getTerrainData(player.position.x, player.position.y, viewDistanceController.viewDistance);
+                });
                 break;
 
             case ServerResponseType.TileGenerationResponse:
@@ -25,11 +28,21 @@ public class ServerResponseHandler
                 List<Dnd.Terrain.Terrain> terrains = terrainList.Terrains.ToList();
 
                 handleTerrainGenerationResponse(terrains);
+                PlayerMovement.isMoving = true;
                 break;
 
             case ServerResponseType.PlayerUpdate:
-                Client client = DnD.Service.Client.Parser.ParseFrom(response.ResponseData);
-                ServerConnectivityInstance.clientsHandler.updatePlayerData(client);
+                MainThreadDispatch.RunOnMainThread(() => {
+                    Client client = DnD.Service.Client.Parser.ParseFrom(response.ResponseData);
+                    ServerConnectivityInstance.clientsHandler.updatePlayerData(client);
+                });
+                break;
+
+            case ServerResponseType.TileItemUpdate:
+                MainThreadDispatch.RunOnMainThread(() => {
+                    TileItemData tileItemData = TileItemData.Parser.ParseFrom(response.ResponseData);
+                    WorldData.handleTileDataUpdate(tileItemData);
+                });
                 break;
         }
     }
@@ -41,5 +54,6 @@ public class ServerResponseHandler
             Debug.LogWarning("[Server Response Handler] Getting terrain at " + "x:" + terrain.PosX + ", y:" + terrain.PosY);
             WorldData.addToTerrainData(terrain);
         }
+        WorldData.tilesPopulated = true;
     }
 }

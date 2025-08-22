@@ -1,5 +1,6 @@
 using UnityEngine;
 using Dnd.Terrain;
+using DnD.Terrain;
 using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf.Collections;
@@ -14,24 +15,23 @@ public class WorldData
 
     public static void addToTerrainData(Dnd.Terrain.Terrain terrain)
     {
-        if (terrainExists(terrain)) { Debug.Log("[World Data] Terrain already exists"); PlayerMovement.isMoving = true; return; }
+        if (terrainExists(terrain)) { PlayerMovement.isMoving = true; return; }
 
-        //popFarthestTerrain();
+        MainThreadDispatch.RunOnMainThread(() => { popFarthestTerrain(); });
 
         terrainData.Add(terrain);
-        Debug.LogWarning("[World Data] Terrain Added. x:" + terrain.PosX + ", y:" + terrain.PosY);
+        Debug.Log(":: [World Data] Terrain Added. x:" + terrain.PosX + ", y:" + terrain.PosY);
         List<Tile> tilesdata = terrain.TileData.ToList();
 
         foreach (Tile tile in tilesdata)
         {
             Vector3 tilePos = new Vector3(tile.PosX, tile.PosY, 0);
             string hashCode = PlayerView.getVector3HashCode(tilePos);
+            Debug.Log("-> [World Data]: tile X:" + tile.PosX + ", Y:" + tile.PosY + " added of terrain X:" + terrain.PosX + ", Y: " + terrain.PosY);
 
             worldTileData[hashCode] = tile;
         }
-        tilesPopulated = true;
         PlayerMovement.isMoving = true;
-        Debug.Log("{" + tilesdata.First().PosX + "," + tilesdata.First().PosY + "}" + ":" + "{" + tilesdata.Last().PosX + "," + tilesdata.Last().PosY + "}");
     }
 
     public static void popFromTerrainData(Dnd.Terrain.Terrain terrain)
@@ -78,5 +78,26 @@ public class WorldData
         }
 
         return false;
+    }
+
+    public static void handleTileDataUpdate(TileItemData tileItemData)
+    {
+        TileItemDataType type = tileItemData.Type;
+
+        switch (type)
+        {
+            case TileItemDataType.Delete:
+                Vector3 tilePos = new Vector3(tileItemData.PosX, tileItemData.PosY, 0);
+                string hashCode = PlayerView.getVector3HashCode(tilePos);
+
+                Tile currTile = WorldData.worldTileData[hashCode];
+
+                TerrainHandler.deleteTile(currTile);
+                break;
+
+            case TileItemDataType.Update:
+                
+                break;
+        }
     }
 }
