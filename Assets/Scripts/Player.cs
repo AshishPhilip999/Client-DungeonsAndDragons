@@ -24,16 +24,18 @@ namespace DnD.Player {
     static PlayerReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgxQbGF5ZXIucHJvdG8SCkRuRC5QbGF5ZXIaDVRlcnJhaW4ucHJvdG8inQEK",
-            "BlBsYXllchIMCgRwb3NYGAEgASgCEgwKBHBvc1kYAiABKAISFAoMdmlld0Rp",
-            "c3RhbmNlGAMgASgFEhoKEmN1cnJlbnRUZXJyYWluUG9zWBgEIAEoAhIaChJj",
-            "dXJyZW50VGVycmFpblBvc1kYBSABKAISKQoLdGVycmFpbkRhdGEYBiADKAsy",
-            "FC5EbmQuVGVycmFpbi5UZXJyYWluQh4KCkRuRC5QbGF5ZXJCEFBsYXllck91",
-            "dGVyQ2xhc3NiBnByb3RvMw=="));
+            "CgxQbGF5ZXIucHJvdG8SCkRuRC5QbGF5ZXIioAEKBlBsYXllchIMCgRwb3NY",
+            "GAEgASgCEgwKBHBvc1kYAiABKAISFAoMdmlld0Rpc3RhbmNlGAMgASgFEhoK",
+            "EmN1cnJlbnRUZXJyYWluUG9zWBgEIAEoAhIaChJjdXJyZW50VGVycmFpblBv",
+            "c1kYBSABKAISLAoLdGVycmFpbkRhdGEYBiABKAsyFy5EbkQuUGxheWVyLlRl",
+            "cnJhaW5EYXRhIk0KC1RlcnJhaW5EYXRhEhwKFGV4aXN0aW5nVGVycmFpbkNv",
+            "dW50GAEgASgFEiAKGGV4aXN0aW5nVGVycmFpblBvc2l0aW9ucxgCIAMoAkIe",
+            "CgpEbkQuUGxheWVyQhBQbGF5ZXJPdXRlckNsYXNzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::Dnd.Terrain.TerrainReflection.Descriptor, },
+          new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Player.Player), global::DnD.Player.Player.Parser, new[]{ "PosX", "PosY", "ViewDistance", "CurrentTerrainPosX", "CurrentTerrainPosY", "TerrainData" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Player.Player), global::DnD.Player.Player.Parser, new[]{ "PosX", "PosY", "ViewDistance", "CurrentTerrainPosX", "CurrentTerrainPosY", "TerrainData" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Player.TerrainData), global::DnD.Player.TerrainData.Parser, new[]{ "ExistingTerrainCount", "ExistingTerrainPositions" }, null, null, null, null)
           }));
     }
     #endregion
@@ -70,7 +72,7 @@ namespace DnD.Player {
       viewDistance_ = other.viewDistance_;
       currentTerrainPosX_ = other.currentTerrainPosX_;
       currentTerrainPosY_ = other.currentTerrainPosY_;
-      terrainData_ = other.terrainData_.Clone();
+      terrainData_ = other.terrainData_ != null ? other.terrainData_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -136,12 +138,13 @@ namespace DnD.Player {
 
     /// <summary>Field number for the "terrainData" field.</summary>
     public const int TerrainDataFieldNumber = 6;
-    private static readonly pb::FieldCodec<global::Dnd.Terrain.Terrain> _repeated_terrainData_codec
-        = pb::FieldCodec.ForMessage(50, global::Dnd.Terrain.Terrain.Parser);
-    private readonly pbc::RepeatedField<global::Dnd.Terrain.Terrain> terrainData_ = new pbc::RepeatedField<global::Dnd.Terrain.Terrain>();
+    private global::DnD.Player.TerrainData terrainData_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Dnd.Terrain.Terrain> TerrainData {
+    public global::DnD.Player.TerrainData TerrainData {
       get { return terrainData_; }
+      set {
+        terrainData_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -162,7 +165,7 @@ namespace DnD.Player {
       if (ViewDistance != other.ViewDistance) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(CurrentTerrainPosX, other.CurrentTerrainPosX)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(CurrentTerrainPosY, other.CurrentTerrainPosY)) return false;
-      if(!terrainData_.Equals(other.terrainData_)) return false;
+      if (!object.Equals(TerrainData, other.TerrainData)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -174,7 +177,7 @@ namespace DnD.Player {
       if (ViewDistance != 0) hash ^= ViewDistance.GetHashCode();
       if (CurrentTerrainPosX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(CurrentTerrainPosX);
       if (CurrentTerrainPosY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(CurrentTerrainPosY);
-      hash ^= terrainData_.GetHashCode();
+      if (terrainData_ != null) hash ^= TerrainData.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -208,7 +211,10 @@ namespace DnD.Player {
         output.WriteRawTag(45);
         output.WriteFloat(CurrentTerrainPosY);
       }
-      terrainData_.WriteTo(output, _repeated_terrainData_codec);
+      if (terrainData_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(TerrainData);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -232,7 +238,9 @@ namespace DnD.Player {
       if (CurrentTerrainPosY != 0F) {
         size += 1 + 4;
       }
-      size += terrainData_.CalculateSize(_repeated_terrainData_codec);
+      if (terrainData_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(TerrainData);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -259,7 +267,12 @@ namespace DnD.Player {
       if (other.CurrentTerrainPosY != 0F) {
         CurrentTerrainPosY = other.CurrentTerrainPosY;
       }
-      terrainData_.Add(other.terrainData_);
+      if (other.terrainData_ != null) {
+        if (terrainData_ == null) {
+          TerrainData = new global::DnD.Player.TerrainData();
+        }
+        TerrainData.MergeFrom(other.TerrainData);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -292,7 +305,160 @@ namespace DnD.Player {
             break;
           }
           case 50: {
-            terrainData_.AddEntriesFrom(input, _repeated_terrainData_codec);
+            if (terrainData_ == null) {
+              TerrainData = new global::DnD.Player.TerrainData();
+            }
+            input.ReadMessage(TerrainData);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class TerrainData : pb::IMessage<TerrainData> {
+    private static readonly pb::MessageParser<TerrainData> _parser = new pb::MessageParser<TerrainData>(() => new TerrainData());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<TerrainData> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::DnD.Player.PlayerReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TerrainData() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TerrainData(TerrainData other) : this() {
+      existingTerrainCount_ = other.existingTerrainCount_;
+      existingTerrainPositions_ = other.existingTerrainPositions_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TerrainData Clone() {
+      return new TerrainData(this);
+    }
+
+    /// <summary>Field number for the "existingTerrainCount" field.</summary>
+    public const int ExistingTerrainCountFieldNumber = 1;
+    private int existingTerrainCount_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int ExistingTerrainCount {
+      get { return existingTerrainCount_; }
+      set {
+        existingTerrainCount_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "existingTerrainPositions" field.</summary>
+    public const int ExistingTerrainPositionsFieldNumber = 2;
+    private static readonly pb::FieldCodec<float> _repeated_existingTerrainPositions_codec
+        = pb::FieldCodec.ForFloat(18);
+    private readonly pbc::RepeatedField<float> existingTerrainPositions_ = new pbc::RepeatedField<float>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<float> ExistingTerrainPositions {
+      get { return existingTerrainPositions_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as TerrainData);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(TerrainData other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (ExistingTerrainCount != other.ExistingTerrainCount) return false;
+      if(!existingTerrainPositions_.Equals(other.existingTerrainPositions_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (ExistingTerrainCount != 0) hash ^= ExistingTerrainCount.GetHashCode();
+      hash ^= existingTerrainPositions_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (ExistingTerrainCount != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(ExistingTerrainCount);
+      }
+      existingTerrainPositions_.WriteTo(output, _repeated_existingTerrainPositions_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (ExistingTerrainCount != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ExistingTerrainCount);
+      }
+      size += existingTerrainPositions_.CalculateSize(_repeated_existingTerrainPositions_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(TerrainData other) {
+      if (other == null) {
+        return;
+      }
+      if (other.ExistingTerrainCount != 0) {
+        ExistingTerrainCount = other.ExistingTerrainCount;
+      }
+      existingTerrainPositions_.Add(other.existingTerrainPositions_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            ExistingTerrainCount = input.ReadInt32();
+            break;
+          }
+          case 18:
+          case 21: {
+            existingTerrainPositions_.AddEntriesFrom(input, _repeated_existingTerrainPositions_codec);
             break;
           }
         }

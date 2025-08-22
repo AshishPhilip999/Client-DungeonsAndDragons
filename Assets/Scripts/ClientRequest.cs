@@ -26,10 +26,11 @@ namespace DnD.Service {
           string.Concat(
             "ChNDbGllbnRSZXF1ZXN0LnByb3RvEgtEbkQuc2VydmljZSJVCg1DbGllbnRS",
             "ZXF1ZXN0Ei8KB3JlcVR5cGUYASABKA4yHi5EbkQuc2VydmljZS5DbGllbnRS",
-            "ZXF1ZXN0VHlwZRITCgtyZXF1ZXN0RGF0YRgCIAEoDCpSChFDbGllbnRSZXF1",
-            "ZXN0VHlwZRIVChFDTElFTlRfQ09OTkVDVElPThAAEhMKD1RJTEVfR0VORVJB",
-            "VElPThABEhEKDUNMSUVOVF9VUERBVEUQAkImCgtEbkQuc2VydmljZUIXQ2xp",
-            "ZW50UmVxdWVzdE91dGVyQ2xhc3NiBnByb3RvMw=="));
+            "ZXF1ZXN0VHlwZRITCgtyZXF1ZXN0RGF0YRgCIAEoDCpsChFDbGllbnRSZXF1",
+            "ZXN0VHlwZRIVChFDTElFTlRfQ09OTkVDVElPThAAEhgKFENMSUVOVF9ESVND",
+            "T05ORUNUSU9OEAESEwoPVElMRV9HRU5FUkFUSU9OEAISEQoNQ0xJRU5UX1VQ",
+            "REFURRADQiYKC0RuRC5zZXJ2aWNlQhdDbGllbnRSZXF1ZXN0T3V0ZXJDbGFz",
+            "c2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::DnD.Service.ClientRequestType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -42,8 +43,9 @@ namespace DnD.Service {
   #region Enums
   public enum ClientRequestType {
     [pbr::OriginalName("CLIENT_CONNECTION")] ClientConnection = 0,
-    [pbr::OriginalName("TILE_GENERATION")] TileGeneration = 1,
-    [pbr::OriginalName("CLIENT_UPDATE")] ClientUpdate = 2,
+    [pbr::OriginalName("CLIENT_DISCONNECTION")] ClientDisconnection = 1,
+    [pbr::OriginalName("TILE_GENERATION")] TileGeneration = 2,
+    [pbr::OriginalName("CLIENT_UPDATE")] ClientUpdate = 3,
   }
 
   #endregion

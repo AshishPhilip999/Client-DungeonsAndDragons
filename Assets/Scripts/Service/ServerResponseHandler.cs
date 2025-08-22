@@ -13,14 +13,18 @@ public class ServerResponseHandler
         switch(responseType)
         {
             case ServerResponseType.ConnectionSuccess:
-                Debug.Log("[Server Response Handler] Connection Success");
+                MainThreadDispatch.RunOnMainThread(() =>
+                {
+                    Debug.Log("[ServerResponseHandler] Connection Success");
 
-                Transform player = ServerConnectivityInstance.player;
-                ViewDistanceController viewDistanceController = player.GetComponent<ViewDistanceController>();
-                ClientRequestHandler.getTerrainData(player.position.x, player.position.y, viewDistanceController.viewDistance);
+                    Transform player = ServerConnectivityInstance.player;
+                    ViewDistanceController viewDistanceController = player.GetComponent<ViewDistanceController>();
+                    ClientRequestHandler.getTerrainData(player.position.x, player.position.y, viewDistanceController.viewDistance);
+                });
                 break;
 
             case ServerResponseType.TileGenerationResponse:
+                Debug.Log("[ServerResponseHandler:: handleResponse -> TielGenerationResponse] Received tile data.");
                 DnD.Terrain.TerrainList terrainList = DnD.Terrain.TerrainList.Parser.ParseFrom(response.ResponseData);
                 List<Dnd.Terrain.Terrain> terrains = terrainList.Terrains.ToList();
 
@@ -28,9 +32,12 @@ public class ServerResponseHandler
                 break;
 
             case ServerResponseType.PlayerUpdate:
-                Client client = DnD.Service.Client.Parser.ParseFrom(response.ResponseData);
-                ServerConnectivityInstance.clientsHandler.updatePlayerData(client);
-                break;
+                MainThreadDispatch.RunOnMainThread(() =>
+                {
+                    Client client = DnD.Service.Client.Parser.ParseFrom(response.ResponseData);
+                    ServerConnectivityInstance.clientsHandler.updatePlayerData(client);
+                });
+                return;
         }
     }
 
@@ -41,5 +48,6 @@ public class ServerResponseHandler
             Debug.LogWarning("[Server Response Handler] Getting terrain at " + "x:" + terrain.PosX + ", y:" + terrain.PosY);
             WorldData.addToTerrainData(terrain);
         }
+        WorldData.tilesPopulated = true;
     }
 }

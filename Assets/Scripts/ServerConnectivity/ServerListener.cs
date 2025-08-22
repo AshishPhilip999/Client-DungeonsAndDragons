@@ -64,12 +64,9 @@ public class ServerListener
                     if (totalRead == messageLength)
                     {
                         ServerResponse serverResponse = ServerResponse.Parser.ParseFrom(messageBuffer);
-                        Debug.Log("[Server Listener] Received response from server");
+                        Debug.Log("[Server Listener] Received response from server of type: " + serverResponse.Response.ToString());
 
-                        MainThreadDispatch.RunOnMainThread(() =>
-                        {
-                            ServerResponseHandler.handleResponse(serverResponse);
-                        });
+                        ServerResponseHandler.handleResponse(serverResponse);
                     } else
                     {
                         Debug.Log("[Server Listener] Total Read is not equal to messageLength");

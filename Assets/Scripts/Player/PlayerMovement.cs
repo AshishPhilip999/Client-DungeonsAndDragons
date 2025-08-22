@@ -25,14 +25,17 @@ public class PlayerMovement : MonoBehaviour
         prevPosition = transform.position;
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    private void Update()
     {
-       if(WorldData.tilesPopulated)
+        if (WorldData.tilesPopulated)
         {
             playerView.enabled = true;
         }
+    }
 
+    // Update is called once per frame
+    void FixedUpdate()
+    {
        float distance = Vector3.Distance(transform.position, prevPosition);
        int verticalDirection = GetVerticalDirection(transform.position, prevPosition);
        if(isMovementApplied())

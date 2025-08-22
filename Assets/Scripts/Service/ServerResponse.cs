@@ -26,11 +26,12 @@ namespace DnD.Service {
           string.Concat(
             "ChRTZXJ2ZXJSZXNwb25zZS5wcm90bxILRG5ELnNlcnZpY2UiWQoOU2VydmVy",
             "UmVzcG9uc2USMQoIcmVzcG9uc2UYASABKA4yHy5EbkQuc2VydmljZS5TZXJ2",
-            "ZXJSZXNwb25zZVR5cGUSFAoMcmVzcG9uc2VEYXRhGAIgASgMKnUKElNlcnZl",
-            "clJlc3BvbnNlVHlwZRIWChJDT05ORUNUSU9OX1NVQ0NFU1MQABIWChJDT05O",
-            "RUNUSU9OX0ZBSUxVUkUQARIcChhUSUxFX0dFTkVSQVRJT05fUkVTUE9OU0UQ",
-            "AhIRCg1QTEFZRVJfVVBEQVRFEANCJwoLRG5ELnNlcnZpY2VCGFNlcnZlclJl",
-            "c3BvbnNlT3V0ZXJDbGFzc2IGcHJvdG8z"));
+            "ZXJSZXNwb25zZVR5cGUSFAoMcmVzcG9uc2VEYXRhGAIgASgMKo4BChJTZXJ2",
+            "ZXJSZXNwb25zZVR5cGUSFgoSQ09OTkVDVElPTl9TVUNDRVNTEAASFgoSQ09O",
+            "TkVDVElPTl9GQUlMVVJFEAESFwoTQ0xJRU5UX0RJU0NPTk5FQ1RFRBACEhwK",
+            "GFRJTEVfR0VORVJBVElPTl9SRVNQT05TRRADEhEKDVBMQVlFUl9VUERBVEUQ",
+            "BEInCgtEbkQuc2VydmljZUIYU2VydmVyUmVzcG9uc2VPdXRlckNsYXNzYgZw",
+            "cm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::DnD.Service.ServerResponseType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -44,8 +45,9 @@ namespace DnD.Service {
   public enum ServerResponseType {
     [pbr::OriginalName("CONNECTION_SUCCESS")] ConnectionSuccess = 0,
     [pbr::OriginalName("CONNECTION_FAILURE")] ConnectionFailure = 1,
-    [pbr::OriginalName("TILE_GENERATION_RESPONSE")] TileGenerationResponse = 2,
-    [pbr::OriginalName("PLAYER_UPDATE")] PlayerUpdate = 3,
+    [pbr::OriginalName("CLIENT_DISCONNECTED")] ClientDisconnected = 2,
+    [pbr::OriginalName("TILE_GENERATION_RESPONSE")] TileGenerationResponse = 3,
+    [pbr::OriginalName("PLAYER_UPDATE")] PlayerUpdate = 4,
   }
 
   #endregion
