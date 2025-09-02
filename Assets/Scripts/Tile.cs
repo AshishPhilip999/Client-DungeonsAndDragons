@@ -24,14 +24,14 @@ namespace Dnd.Terrain {
     static TileReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpUaWxlLnByb3RvEgtEbmQuVGVycmFpbhoOVGlsZVR5cGUucHJvdG8iRwoE",
+            "CgpUaWxlLnByb3RvEgtEbmQuVGVycmFpbhoOVGlsZVR5cGUucHJvdG8iWAoE",
             "VGlsZRIMCgRwb3NYGAEgASgCEgwKBHBvc1kYAiABKAISIwoEdHlwZRgDIAEo",
-            "DjIVLkRuZC5UZXJyYWluLlRpbGVUeXBlQh0KC0RuRC5UZXJyYWluQg5UaWxl",
-            "T3V0ZXJDbGFzc2IGcHJvdG8z"));
+            "DjIVLkRuZC5UZXJyYWluLlRpbGVUeXBlEg8KB3ZhcmlhbnQYBCABKAVCHQoL",
+            "RG5ELlRlcnJhaW5CDlRpbGVPdXRlckNsYXNzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Dnd.Terrain.TileTypeReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Dnd.Terrain.Tile), global::Dnd.Terrain.Tile.Parser, new[]{ "PosX", "PosY", "Type" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Dnd.Terrain.Tile), global::Dnd.Terrain.Tile.Parser, new[]{ "PosX", "PosY", "Type", "Variant" }, null, null, null, null)
           }));
     }
     #endregion
@@ -66,6 +66,7 @@ namespace Dnd.Terrain {
       posX_ = other.posX_;
       posY_ = other.posY_;
       type_ = other.type_;
+      variant_ = other.variant_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -107,6 +108,17 @@ namespace Dnd.Terrain {
       }
     }
 
+    /// <summary>Field number for the "variant" field.</summary>
+    public const int VariantFieldNumber = 4;
+    private int variant_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Variant {
+      get { return variant_; }
+      set {
+        variant_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as Tile);
@@ -123,6 +135,7 @@ namespace Dnd.Terrain {
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosX, other.PosX)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosY, other.PosY)) return false;
       if (Type != other.Type) return false;
+      if (Variant != other.Variant) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -132,6 +145,7 @@ namespace Dnd.Terrain {
       if (PosX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosX);
       if (PosY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosY);
       if (Type != global::Dnd.Terrain.TileType.StandardGrass) hash ^= Type.GetHashCode();
+      if (Variant != 0) hash ^= Variant.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -157,6 +171,10 @@ namespace Dnd.Terrain {
         output.WriteRawTag(24);
         output.WriteEnum((int) Type);
       }
+      if (Variant != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(Variant);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -173,6 +191,9 @@ namespace Dnd.Terrain {
       }
       if (Type != global::Dnd.Terrain.TileType.StandardGrass) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
+      }
+      if (Variant != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Variant);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -193,6 +214,9 @@ namespace Dnd.Terrain {
       }
       if (other.Type != global::Dnd.Terrain.TileType.StandardGrass) {
         Type = other.Type;
+      }
+      if (other.Variant != 0) {
+        Variant = other.Variant;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -215,6 +239,10 @@ namespace Dnd.Terrain {
           }
           case 24: {
             Type = (global::Dnd.Terrain.TileType) input.ReadEnum();
+            break;
+          }
+          case 32: {
+            Variant = input.ReadInt32();
             break;
           }
         }

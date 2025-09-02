@@ -28,17 +28,8 @@ public class ClientRequestHandler
         Player playerData = new Player();
         playerData.PosX = posX;
         playerData.PosY = posY;
-        playerData.CurrentTerrainPosX = player.CurrentTerrainPosX;
-        playerData.CurrentTerrainPosY = player.CurrentTerrainPosY;
 
-        foreach(Dnd.Terrain.Terrain terrain in WorldData.terrainData)
-        {
-            Dnd.Terrain.Terrain currTerrain = new Dnd.Terrain.Terrain();
-            currTerrain.PosX = terrain.PosX;
-            currTerrain.PosY = terrain.PosY;
-
-            //playerData.TerrainData.Add(currTerrain);
-        }
+        playerData.TerrainData = player.TerrainData;
 
         Client client = ServerConnectivityInstance.service.localGameCLient;
         client.Player = playerData;
@@ -55,15 +46,18 @@ public class ClientRequestHandler
         ClientRequest request = new ClientRequest();
         request.ReqType = ClientRequestType.ClientUpdate;
 
-        Player player = ServerConnectivityInstance.service.localGameCLient.Player;
-        player.PosX = posX;
-        player.PosY = posY;
+        Player playerData = new Player();
+        playerData.PosX = posX;
+        playerData.PosY = posY;
 
         Client client = ServerConnectivityInstance.service.localGameCLient;
-        client.Player = player;
 
-        byte[] clientData = client.ToByteArray();
-        request.RequestData = ByteString.CopyFrom(clientData);
+        Client clientData = new Client();
+        clientData.ClientID = client.ClientID;
+        clientData.Player = playerData;
+
+        byte[] clientDataBytes = client.ToByteArray();
+        request.RequestData = ByteString.CopyFrom(clientDataBytes);
 
         sendRequest(request);
     }

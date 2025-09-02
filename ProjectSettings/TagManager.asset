@@ -50,5 +50,8 @@ TagManager:
   - name: Render 2
     uniqueID: 4078120113
     locked: 0
+  - name: Opaque
+    uniqueID: 3135222283
+    locked: 0
   m_RenderingLayers:
   - Default
