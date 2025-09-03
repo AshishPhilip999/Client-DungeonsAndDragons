@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
 using System.Linq;
 using Dnd.Terrain;
+using System.Reflection;
 
 public class PlayerView : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class PlayerView : MonoBehaviour
     public int direction = 1; // Should make it a set of only -1 and 1
 
     public List<GameObject> tiles;
+    public List<GameObject> standardTreeVariants;
 
     private Vector3[,] playerViewPosData;
 
@@ -210,8 +213,9 @@ public class PlayerView : MonoBehaviour
 
             string hashCode = getVector3HashCode(tileData);
             Tile tile = WorldData.worldTileData[hashCode];
+            int variantIndex = tile.Variant;
 
-            GameObject instanceTile = getTileFromTileType(tile.Type);
+            GameObject instanceTile = getTileFromTileType(tile.Type, variantIndex);
 
             GameObject newTile = Instantiate(instanceTile, new Vector3(tileData.x, tileData.y, 0), Quaternion.identity);
             newTile.isStatic = true;
@@ -219,7 +223,12 @@ public class PlayerView : MonoBehaviour
 
             if (tile.Type == TileType.StandardTree)
             {
-                GameObject instanceTreeGrass = getTileFromTileType(TileType.LightPatchGrass);
+                ///// Adding a little offset to make it look more natural.
+                //float xOffSet = Random.Range(0.4f, -0.4f);
+                //float yOffSet = Random.Range(0.4f, -0.4f);
+                //newTile.transform.position += new Vector3(xOffSet, yOffSet);
+
+                GameObject instanceTreeGrass = getTileFromTileType(TileType.LightPatchGrass, 0);
                 GameObject treeGrass = Instantiate(instanceTreeGrass, new Vector3(tileData.x, tileData.y, 0), Quaternion.identity);
                 treeGrass.isStatic = true;
                 treeGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(tileData.y);
@@ -255,8 +264,9 @@ public class PlayerView : MonoBehaviour
 
                 string hashCode = getVector3HashCode(viewData[i, j]);
                 Tile tileData = WorldData.worldTileData[hashCode];
+                int variantIndex = tileData.Variant;
 
-                GameObject instanceTile = getTileFromTileType(tileData.Type);
+                GameObject instanceTile = getTileFromTileType(tileData.Type, variantIndex);
 
                 Debug.Log(viewData[i, j].x + "," + viewData[i, j].y);
                 GameObject currTile = Instantiate(instanceTile, viewData[i,j] , Quaternion.identity);
@@ -265,7 +275,12 @@ public class PlayerView : MonoBehaviour
 
                 if (tileData.Type == TileType.StandardTree)
                 {
-                    GameObject instanceTreeGrass = getTileFromTileType(TileType.LightPatchGrass);
+                    ///// Adding a little offset to make it look more natural.
+                    //float xOffSet = Random.Range(0.2f, -0.2f);
+                    //float yOffSet = Random.Range(0.2f, -0.2f);
+                    //currTile.transform.position += new Vector3(xOffSet, yOffSet);
+
+                    GameObject instanceTreeGrass = getTileFromTileType(TileType.LightPatchGrass, 0);
                     GameObject treeGrass = Instantiate(instanceTreeGrass, viewData[i, j], Quaternion.identity);
                     treeGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(viewData[i, j].y); ;
                     tileObjects.Add(treeGrass);
@@ -285,7 +300,7 @@ public class PlayerView : MonoBehaviour
         return (int)(yPos / tileSize);
     }
 
-    private GameObject getTileFromTileType(TileType tileType)
+    private GameObject getTileFromTileType(TileType tileType, int variantIndex)
     {
         switch (tileType)
         {
@@ -296,7 +311,7 @@ public class PlayerView : MonoBehaviour
             case TileType.DarkPatchGrass:
                 return tiles[2];
             case TileType.StandardTree:
-                return tiles[3];
+                return standardTreeVariants[variantIndex];
             case TileType.Rock:
                 return tiles[4];
             case TileType.GiantRock:

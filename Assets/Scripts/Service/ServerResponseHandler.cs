@@ -1,5 +1,6 @@
 using UnityEngine;
 using DnD.Service;
+using DnD.Player;
 using Google.Protobuf;
 using System.Linq;
 using System.Collections.Generic;
@@ -43,10 +44,20 @@ public class ServerResponseHandler
 
     private static void handleTerrainGenerationResponse(List<Dnd.Terrain.Terrain> terrains)
     {
-        foreach(Dnd.Terrain.Terrain terrain in terrains)
+        DnD.Player.TerrainData localPlayerTerrainData = ServerConnectivityInstance.service.localGameCLient.Player.TerrainData;
+        if(localPlayerTerrainData == null)
+        {
+            Debug.LogError("Null");
+        }
+        foreach (Dnd.Terrain.Terrain terrain in terrains)
         {
             Debug.LogWarning("[Server Response Handler] Getting terrain at " + "x:" + terrain.PosX + ", y:" + terrain.PosY);
             WorldData.addToTerrainData(terrain);
+
+            localPlayerTerrainData.ExistingTerrainPositions.Add(terrain.PosX);
+            localPlayerTerrainData.ExistingTerrainPositions.Add(terrain.PosY);
+
+            Debug.Log("[ServerResponseHandler:: handleTerrainGenerationResponse] Added Terrain: posX: " + terrain.PosX + ", posY: " + terrain.PosY);
         }
         WorldData.tilesPopulated = true;
     }
