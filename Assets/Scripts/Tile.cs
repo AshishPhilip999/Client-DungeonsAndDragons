@@ -24,14 +24,17 @@ namespace Dnd.Terrain {
     static TileReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpUaWxlLnByb3RvEgtEbmQuVGVycmFpbhoOVGlsZVR5cGUucHJvdG8iRwoE",
-            "VGlsZRIMCgRwb3NYGAEgASgCEgwKBHBvc1kYAiABKAISIwoEdHlwZRgDIAEo",
-            "DjIVLkRuZC5UZXJyYWluLlRpbGVUeXBlQh0KC0RuRC5UZXJyYWluQg5UaWxl",
-            "T3V0ZXJDbGFzc2IGcHJvdG8z"));
+            "CgpUaWxlLnByb3RvEgtEbmQuVGVycmFpbhoOVGlsZVR5cGUucHJvdG8ivwEK",
+            "BFRpbGUSDAoEcG9zWBgBIAEoAhIMCgRwb3NZGAIgASgCEiMKBHR5cGUYAyAB",
+            "KA4yFS5EbmQuVGVycmFpbi5UaWxlVHlwZRIPCgd2YXJpYW50GAQgASgFEh0K",
+            "FXNwYXduUG9zaXRpb25JbmRpY2llcxgFIAMoBRIcChRzcGF3blBvc2l0aW9u",
+            "T2JqZWN0cxgGIAMoBRITCgt0aWxlT2ZmU2V0WBgHIAEoAhITCgt0aWxlT2Zm",
+            "U2V0WRgIIAEoAkIdCgtEbkQuVGVycmFpbkIOVGlsZU91dGVyQ2xhc3NiBnBy",
+            "b3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Dnd.Terrain.TileTypeReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Dnd.Terrain.Tile), global::Dnd.Terrain.Tile.Parser, new[]{ "PosX", "PosY", "Type" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Dnd.Terrain.Tile), global::Dnd.Terrain.Tile.Parser, new[]{ "PosX", "PosY", "Type", "Variant", "SpawnPositionIndicies", "SpawnPositionObjects", "TileOffSetX", "TileOffSetY" }, null, null, null, null)
           }));
     }
     #endregion
@@ -66,6 +69,11 @@ namespace Dnd.Terrain {
       posX_ = other.posX_;
       posY_ = other.posY_;
       type_ = other.type_;
+      variant_ = other.variant_;
+      spawnPositionIndicies_ = other.spawnPositionIndicies_.Clone();
+      spawnPositionObjects_ = other.spawnPositionObjects_.Clone();
+      tileOffSetX_ = other.tileOffSetX_;
+      tileOffSetY_ = other.tileOffSetY_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -107,6 +115,65 @@ namespace Dnd.Terrain {
       }
     }
 
+    /// <summary>Field number for the "variant" field.</summary>
+    public const int VariantFieldNumber = 4;
+    private int variant_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Variant {
+      get { return variant_; }
+      set {
+        variant_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "spawnPositionIndicies" field.</summary>
+    public const int SpawnPositionIndiciesFieldNumber = 5;
+    private static readonly pb::FieldCodec<int> _repeated_spawnPositionIndicies_codec
+        = pb::FieldCodec.ForInt32(42);
+    private readonly pbc::RepeatedField<int> spawnPositionIndicies_ = new pbc::RepeatedField<int>();
+    /// <summary>
+    /// Decides where to spawn.
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<int> SpawnPositionIndicies {
+      get { return spawnPositionIndicies_; }
+    }
+
+    /// <summary>Field number for the "spawnPositionObjects" field.</summary>
+    public const int SpawnPositionObjectsFieldNumber = 6;
+    private static readonly pb::FieldCodec<int> _repeated_spawnPositionObjects_codec
+        = pb::FieldCodec.ForInt32(50);
+    private readonly pbc::RepeatedField<int> spawnPositionObjects_ = new pbc::RepeatedField<int>();
+    /// <summary>
+    /// Decides what to spawn.
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<int> SpawnPositionObjects {
+      get { return spawnPositionObjects_; }
+    }
+
+    /// <summary>Field number for the "tileOffSetX" field.</summary>
+    public const int TileOffSetXFieldNumber = 7;
+    private float tileOffSetX_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float TileOffSetX {
+      get { return tileOffSetX_; }
+      set {
+        tileOffSetX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "tileOffSetY" field.</summary>
+    public const int TileOffSetYFieldNumber = 8;
+    private float tileOffSetY_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public float TileOffSetY {
+      get { return tileOffSetY_; }
+      set {
+        tileOffSetY_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as Tile);
@@ -123,6 +190,11 @@ namespace Dnd.Terrain {
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosX, other.PosX)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosY, other.PosY)) return false;
       if (Type != other.Type) return false;
+      if (Variant != other.Variant) return false;
+      if(!spawnPositionIndicies_.Equals(other.spawnPositionIndicies_)) return false;
+      if(!spawnPositionObjects_.Equals(other.spawnPositionObjects_)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TileOffSetX, other.TileOffSetX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TileOffSetY, other.TileOffSetY)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -132,6 +204,11 @@ namespace Dnd.Terrain {
       if (PosX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosX);
       if (PosY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosY);
       if (Type != global::Dnd.Terrain.TileType.StandardGrass) hash ^= Type.GetHashCode();
+      if (Variant != 0) hash ^= Variant.GetHashCode();
+      hash ^= spawnPositionIndicies_.GetHashCode();
+      hash ^= spawnPositionObjects_.GetHashCode();
+      if (TileOffSetX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TileOffSetX);
+      if (TileOffSetY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TileOffSetY);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -157,6 +234,20 @@ namespace Dnd.Terrain {
         output.WriteRawTag(24);
         output.WriteEnum((int) Type);
       }
+      if (Variant != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(Variant);
+      }
+      spawnPositionIndicies_.WriteTo(output, _repeated_spawnPositionIndicies_codec);
+      spawnPositionObjects_.WriteTo(output, _repeated_spawnPositionObjects_codec);
+      if (TileOffSetX != 0F) {
+        output.WriteRawTag(61);
+        output.WriteFloat(TileOffSetX);
+      }
+      if (TileOffSetY != 0F) {
+        output.WriteRawTag(69);
+        output.WriteFloat(TileOffSetY);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -173,6 +264,17 @@ namespace Dnd.Terrain {
       }
       if (Type != global::Dnd.Terrain.TileType.StandardGrass) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
+      }
+      if (Variant != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Variant);
+      }
+      size += spawnPositionIndicies_.CalculateSize(_repeated_spawnPositionIndicies_codec);
+      size += spawnPositionObjects_.CalculateSize(_repeated_spawnPositionObjects_codec);
+      if (TileOffSetX != 0F) {
+        size += 1 + 4;
+      }
+      if (TileOffSetY != 0F) {
+        size += 1 + 4;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -193,6 +295,17 @@ namespace Dnd.Terrain {
       }
       if (other.Type != global::Dnd.Terrain.TileType.StandardGrass) {
         Type = other.Type;
+      }
+      if (other.Variant != 0) {
+        Variant = other.Variant;
+      }
+      spawnPositionIndicies_.Add(other.spawnPositionIndicies_);
+      spawnPositionObjects_.Add(other.spawnPositionObjects_);
+      if (other.TileOffSetX != 0F) {
+        TileOffSetX = other.TileOffSetX;
+      }
+      if (other.TileOffSetY != 0F) {
+        TileOffSetY = other.TileOffSetY;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -215,6 +328,28 @@ namespace Dnd.Terrain {
           }
           case 24: {
             Type = (global::Dnd.Terrain.TileType) input.ReadEnum();
+            break;
+          }
+          case 32: {
+            Variant = input.ReadInt32();
+            break;
+          }
+          case 42:
+          case 40: {
+            spawnPositionIndicies_.AddEntriesFrom(input, _repeated_spawnPositionIndicies_codec);
+            break;
+          }
+          case 50:
+          case 48: {
+            spawnPositionObjects_.AddEntriesFrom(input, _repeated_spawnPositionObjects_codec);
+            break;
+          }
+          case 61: {
+            TileOffSetX = input.ReadFloat();
+            break;
+          }
+          case 69: {
+            TileOffSetY = input.ReadFloat();
             break;
           }
         }

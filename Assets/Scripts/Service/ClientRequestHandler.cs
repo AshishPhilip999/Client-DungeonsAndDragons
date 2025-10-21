@@ -28,17 +28,8 @@ public class ClientRequestHandler
         Player playerData = new Player();
         playerData.PosX = posX;
         playerData.PosY = posY;
-        playerData.CurrentTerrainPosX = player.CurrentTerrainPosX;
-        playerData.CurrentTerrainPosY = player.CurrentTerrainPosY;
 
-        foreach(Dnd.Terrain.Terrain terrain in WorldData.terrainData)
-        {
-            Dnd.Terrain.Terrain currTerrain = new Dnd.Terrain.Terrain();
-            currTerrain.PosX = terrain.PosX;
-            currTerrain.PosY = terrain.PosY;
-
-            //playerData.TerrainData.Add(currTerrain);
-        }
+        playerData.TerrainData = player.TerrainData;
 
         Client client = ServerConnectivityInstance.service.localGameCLient;
         client.Player = playerData;

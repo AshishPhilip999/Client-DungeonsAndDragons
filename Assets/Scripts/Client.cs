@@ -24,14 +24,14 @@ namespace DnD.Service {
     static ClientReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgxDbGllbnQucHJvdG8SC0RuRC5zZXJ2aWNlGgxQbGF5ZXIucHJvdG8iaAoG",
-            "Q2xpZW50EhIKCnBvcnROdW1iZXIYASABKAUSFAoMbG9jYWxBZGRyZXNzGAIg",
-            "ASgJEhAKCGNsaWVudElEGAMgASgJEiIKBnBsYXllchgEIAEoCzISLkRuRC5Q",
-            "bGF5ZXIuUGxheWVyYgZwcm90bzM="));
+            "CgxDbGllbnQucHJvdG8SC0RuRC5zZXJ2aWNlGgxQbGF5ZXIucHJvdG8iPgoG",
+            "Q2xpZW50EhAKCGNsaWVudElEGAMgASgJEiIKBnBsYXllchgEIAEoCzISLkRu",
+            "RC5QbGF5ZXIuUGxheWVyQh8KC0RuRC5zZXJ2aWNlQhBDbGllbnRPdXRlckNs",
+            "YXNzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::DnD.Player.PlayerReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Service.Client), global::DnD.Service.Client.Parser, new[]{ "PortNumber", "LocalAddress", "ClientID", "Player" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Service.Client), global::DnD.Service.Client.Parser, new[]{ "ClientID", "Player" }, null, null, null, null)
           }));
     }
     #endregion
@@ -63,8 +63,6 @@ namespace DnD.Service {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public Client(Client other) : this() {
-      portNumber_ = other.portNumber_;
-      localAddress_ = other.localAddress_;
       clientID_ = other.clientID_;
       player_ = other.player_ != null ? other.player_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -73,28 +71,6 @@ namespace DnD.Service {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public Client Clone() {
       return new Client(this);
-    }
-
-    /// <summary>Field number for the "portNumber" field.</summary>
-    public const int PortNumberFieldNumber = 1;
-    private int portNumber_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int PortNumber {
-      get { return portNumber_; }
-      set {
-        portNumber_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "localAddress" field.</summary>
-    public const int LocalAddressFieldNumber = 2;
-    private string localAddress_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string LocalAddress {
-      get { return localAddress_; }
-      set {
-        localAddress_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
     }
 
     /// <summary>Field number for the "clientID" field.</summary>
@@ -132,8 +108,6 @@ namespace DnD.Service {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (PortNumber != other.PortNumber) return false;
-      if (LocalAddress != other.LocalAddress) return false;
       if (ClientID != other.ClientID) return false;
       if (!object.Equals(Player, other.Player)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -142,8 +116,6 @@ namespace DnD.Service {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (PortNumber != 0) hash ^= PortNumber.GetHashCode();
-      if (LocalAddress.Length != 0) hash ^= LocalAddress.GetHashCode();
       if (ClientID.Length != 0) hash ^= ClientID.GetHashCode();
       if (player_ != null) hash ^= Player.GetHashCode();
       if (_unknownFields != null) {
@@ -159,14 +131,6 @@ namespace DnD.Service {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (PortNumber != 0) {
-        output.WriteRawTag(8);
-        output.WriteInt32(PortNumber);
-      }
-      if (LocalAddress.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(LocalAddress);
-      }
       if (ClientID.Length != 0) {
         output.WriteRawTag(26);
         output.WriteString(ClientID);
@@ -183,12 +147,6 @@ namespace DnD.Service {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (PortNumber != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(PortNumber);
-      }
-      if (LocalAddress.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(LocalAddress);
-      }
       if (ClientID.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(ClientID);
       }
@@ -205,12 +163,6 @@ namespace DnD.Service {
     public void MergeFrom(Client other) {
       if (other == null) {
         return;
-      }
-      if (other.PortNumber != 0) {
-        PortNumber = other.PortNumber;
-      }
-      if (other.LocalAddress.Length != 0) {
-        LocalAddress = other.LocalAddress;
       }
       if (other.ClientID.Length != 0) {
         ClientID = other.ClientID;
@@ -232,14 +184,6 @@ namespace DnD.Service {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
-            PortNumber = input.ReadInt32();
-            break;
-          }
-          case 18: {
-            LocalAddress = input.ReadString();
-            break;
-          }
           case 26: {
             ClientID = input.ReadString();
             break;

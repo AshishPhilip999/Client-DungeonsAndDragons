@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
+using System.Collections.Generic;
 using System.Text;
 using System;
 using Google.Protobuf;
@@ -34,19 +35,24 @@ public class ServerConnection
         try
         {
             this.playerObject = playerObject;
-            localClient = new TcpClient(this.serverIPAddress, this.serverPort);
-
-            int localPort = -1;
+            this.localClient = new TcpClient(this.serverIPAddress, this.serverPort);
 
             ClientRequest clientRequest = new ClientRequest();
             clientRequest.ReqType = ClientRequestType.ClientConnection;
 
             Client client = new Client();
-            client.PortNumber = localPort;
-            client.LocalAddress = GetLocalIPAddress();
             client.ClientID = Guid.NewGuid().ToString();
 
-            localGameCLient = client;
+            this.localGameCLient = client;
+
+            this.localGameCLient.Player = new Player();
+            this.localGameCLient.Player.PosX = playerObject.transform.position.x;
+            this.localGameCLient.Player.PosY = playerObject.transform.position.y;
+
+            this.localGameCLient.Player.ViewDistance = playerObject.GetComponent<PlayerView>().viewDistance;
+            this.localGameCLient.Player.CurrentTerrainPosX = -1;
+            this.localGameCLient.Player.CurrentTerrainPosY = -1;
+            this.localGameCLient.Player.TerrainData = new DnD.Player.TerrainData();
 
             byte[] clientData = client.ToByteArray();
 
@@ -62,14 +68,6 @@ public class ServerConnection
             netWorkStream.Flush();
 
             Debug.Log("[info] Server Connection Request sent!");
-
-            this.localGameCLient.Player = new Player();
-            this.localGameCLient.Player.PosX = playerObject.transform.position.x;
-            this.localGameCLient.Player.PosY = playerObject.transform.position.y;
-
-            this.localGameCLient.Player.ViewDistance = playerObject.GetComponent<PlayerView>().viewDistance;
-            this.localGameCLient.Player.CurrentTerrainPosX = -1;
-            this.localGameCLient.Player.CurrentTerrainPosY = -1;
 
         } catch (Exception ex)
         {

@@ -19,9 +19,13 @@ public class PlayerMovement : MonoBehaviour
     public ViewDistanceController viewDistanceController;
 
     private Vector3 prevPosition;
+    private Vector3 genRequestDistance;
+
+    public float genDistance;
 
     private void Start()
     {
+        genRequestDistance = transform.position;
         prevPosition = transform.position;
     }
 
@@ -37,6 +41,8 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
        float distance = Vector3.Distance(transform.position, prevPosition);
+       genDistance = Vector3.Distance(transform.position, genRequestDistance);
+
        int verticalDirection = GetVerticalDirection(transform.position, prevPosition);
        if(isMovementApplied())
         {
@@ -46,9 +52,14 @@ public class PlayerMovement : MonoBehaviour
             if (distance > 0.25f)
             {
                 isMoving = false;
-                ClientRequestHandler.getTerrainData(transform.position.x, transform.position.y, viewDistanceController.viewDistance);
                 playerView.updateTiles(transform.position, verticalDirection);
                 prevPosition = transform.position;
+            }
+
+            if (genDistance > 10.0f)
+            {
+                ClientRequestHandler.getTerrainData(transform.position.x, transform.position.y, viewDistanceController.viewDistance);
+                genRequestDistance = transform.position;
             }
         }
     }
