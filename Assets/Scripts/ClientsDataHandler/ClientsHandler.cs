@@ -33,6 +33,7 @@ public class ClientsHandler : MonoBehaviour
 
     public void updatePlayer(GameObject player, DnD.Player.Player currPlayer)
     {
+        Debug.Log("[ClientHandler:: updatePlayer] Other player curr position posX: " + currPlayer.PosX + ", posY: " + currPlayer.PosY);
         player.transform.position = new Vector3(currPlayer.PosX, currPlayer.PosY);
     }
 }

@@ -36,6 +36,7 @@ public class ServerResponseHandler
                 MainThreadDispatch.RunOnMainThread(() =>
                 {
                     Client client = DnD.Service.Client.Parser.ParseFrom(response.ResponseData);
+                    Debug.Log("[ServerResponseHandler:: handleResponse] Received player update");
                     ServerConnectivityInstance.clientsHandler.updatePlayerData(client);
                 });
                 return;
@@ -49,6 +50,7 @@ public class ServerResponseHandler
         {
             Debug.LogError("Null");
         }
+        PlayerMovement.isMoving = false;
         foreach (Dnd.Terrain.Terrain terrain in terrains)
         {
             Debug.LogWarning("[Server Response Handler] Getting terrain at " + "x:" + terrain.PosX + ", y:" + terrain.PosY);
@@ -60,5 +62,6 @@ public class ServerResponseHandler
             Debug.Log("[ServerResponseHandler:: handleTerrainGenerationResponse] Added Terrain: posX: " + terrain.PosX + ", posY: " + terrain.PosY);
         }
         WorldData.tilesPopulated = true;
+        PlayerMovement.isMoving = true;
     }
 }

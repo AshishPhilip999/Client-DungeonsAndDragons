@@ -46,18 +46,15 @@ public class ClientRequestHandler
         ClientRequest request = new ClientRequest();
         request.ReqType = ClientRequestType.ClientUpdate;
 
-        Player playerData = new Player();
-        playerData.PosX = posX;
-        playerData.PosY = posY;
+        Player player = ServerConnectivityInstance.service.localGameCLient.Player;
+        player.PosX = posX;
+        player.PosY = posY;
 
         Client client = ServerConnectivityInstance.service.localGameCLient;
+        client.Player = player;
 
-        Client clientData = new Client();
-        clientData.ClientID = client.ClientID;
-        clientData.Player = playerData;
-
-        byte[] clientDataBytes = client.ToByteArray();
-        request.RequestData = ByteString.CopyFrom(clientDataBytes);
+        byte[] clientData = client.ToByteArray();
+        request.RequestData = ByteString.CopyFrom(clientData);
 
         sendRequest(request);
     }

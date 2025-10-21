@@ -10,12 +10,16 @@ public class PlayerView : MonoBehaviour
     public Transform playerPosition;
     public int viewDistance;
     public GameObject tile;
-    public float tileSize = 0.25f;
+    public float tileSize;
 
     public int direction = 1; // Should make it a set of only -1 and 1
 
     public List<GameObject> tiles;
+
     public List<GameObject> standardTreeVariants;
+    public List<GameObject> standardGrassVariants;
+    public List<GameObject> rockVariants;
+    public List<GameObject> woodenCabinVariants;
 
     private Vector3[,] playerViewPosData;
 
@@ -216,24 +220,33 @@ public class PlayerView : MonoBehaviour
             int variantIndex = tile.Variant;
 
             GameObject instanceTile = getTileFromTileType(tile.Type, variantIndex);
-
             GameObject newTile = Instantiate(instanceTile, new Vector3(tileData.x, tileData.y, 0), Quaternion.identity);
+            newTile.transform.position += new Vector3(tile.TileOffSetX, tile.TileOffSetY, 0);
+
             newTile.isStatic = true;
             newTile.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(tileData.y);
-
-            if (tile.Type == TileType.StandardTree)
+            TileSpawnPositioner tileSpawnPositioner = newTile.GetComponent<TileSpawnPositioner>();
+            if (tileSpawnPositioner != null)
             {
-                ///// Adding a little offset to make it look more natural.
-                //float xOffSet = Random.Range(0.4f, -0.4f);
-                //float yOffSet = Random.Range(0.4f, -0.4f);
-                //newTile.transform.position += new Vector3(xOffSet, yOffSet);
+                for (int index = 0; index < tile.SpawnPositionIndicies.Count; index++)
+                {
+                    int spawnObjectIndex = tile.SpawnPositionObjects[index];
+                    int spawnPositionIndex = tile.SpawnPositionIndicies[index];
+                    GameObject currSpawnObject = Instantiate(tileSpawnPositioner.spawnPositionObjects[spawnObjectIndex],
+                        tileSpawnPositioner.spawnPositions[spawnPositionIndex].transform.position, Quaternion.identity);
+                    currSpawnObject.GetComponent<SpriteRenderer>().sortingOrder = newTile.GetComponent<SpriteRenderer>().sortingOrder + 1;
+                    tileSpawnPositioner.objectsSpawned.Add(currSpawnObject);
+                    currSpawnObject.transform.SetParent(newTile.transform, true);
+                }
+            }
 
-                GameObject instanceTreeGrass = getTileFromTileType(TileType.LightPatchGrass, 0);
-                GameObject treeGrass = Instantiate(instanceTreeGrass, new Vector3(tileData.x, tileData.y, 0), Quaternion.identity);
-                treeGrass.isStatic = true;
-                treeGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(tileData.y);
-
-                tileObjects.Add(treeGrass);
+            if (tile.Type != TileType.LightPatchGrass )
+            {
+                GameObject grass = getTileFromTileType(TileType.LightPatchGrass, 0);
+                GameObject instanceGrass = Instantiate(grass, new Vector3(tileData.x, tileData.y, 0), Quaternion.identity);
+                instanceGrass.isStatic = true;
+                instanceGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(tileData.y);
+                tileObjects.Add(instanceGrass);
             }
 
             tileObjects.Add(newTile);
@@ -270,20 +283,32 @@ public class PlayerView : MonoBehaviour
 
                 Debug.Log(viewData[i, j].x + "," + viewData[i, j].y);
                 GameObject currTile = Instantiate(instanceTile, viewData[i,j] , Quaternion.identity);
+                currTile.transform.position += new Vector3(tileData.TileOffSetX, tileData.TileOffSetY, 0);
+
+                TileSpawnPositioner tileSpawnPositioner = currTile.GetComponent<TileSpawnPositioner>();
                 currTile.isStatic = true;
                 currTile.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(viewData[i, j].y);
-
-                if (tileData.Type == TileType.StandardTree)
+                if (tileSpawnPositioner != null)
                 {
-                    ///// Adding a little offset to make it look more natural.
-                    //float xOffSet = Random.Range(0.2f, -0.2f);
-                    //float yOffSet = Random.Range(0.2f, -0.2f);
-                    //currTile.transform.position += new Vector3(xOffSet, yOffSet);
+                    for (int index = 0; index < tileData.SpawnPositionIndicies.Count; index++)
+                    {
+                        int spawnObjectIndex = tileData.SpawnPositionObjects[index];
+                        int spawnPositionIndex = tileData.SpawnPositionIndicies[index];
+                        GameObject currSpawnObject = Instantiate(tileSpawnPositioner.spawnPositionObjects[spawnObjectIndex],
+                            tileSpawnPositioner.spawnPositions[spawnPositionIndex].transform.position, Quaternion.identity);
+                        currSpawnObject.GetComponent<SpriteRenderer>().sortingOrder = currTile.GetComponent<SpriteRenderer>().sortingOrder + 1;
+                        tileSpawnPositioner.objectsSpawned.Add(currSpawnObject);
+                        currSpawnObject.transform.SetParent(currTile.transform, true);
+                    }
+                }
 
-                    GameObject instanceTreeGrass = getTileFromTileType(TileType.LightPatchGrass, 0);
-                    GameObject treeGrass = Instantiate(instanceTreeGrass, viewData[i, j], Quaternion.identity);
-                    treeGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(viewData[i, j].y); ;
-                    tileObjects.Add(treeGrass);
+                if (tileData.Type != TileType.LightPatchGrass)
+                {
+                    GameObject grass = getTileFromTileType(TileType.LightPatchGrass, 0);
+                    GameObject instanceGrass = Instantiate(grass, viewData[i, j], Quaternion.identity);
+                    instanceGrass.isStatic = true;
+                    instanceGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(viewData[i, j].y); ;
+                    tileObjects.Add(instanceGrass);
                 }
 
                 tileObjects.Add(currTile);
@@ -305,7 +330,7 @@ public class PlayerView : MonoBehaviour
         switch (tileType)
         {
             case TileType.StandardGrass:
-                return tiles[0];
+                return standardGrassVariants[variantIndex];
             case TileType.LightPatchGrass:
                 return tiles[1];
             case TileType.DarkPatchGrass:
@@ -313,11 +338,13 @@ public class PlayerView : MonoBehaviour
             case TileType.StandardTree:
                 return standardTreeVariants[variantIndex];
             case TileType.Rock:
-                return tiles[4];
+                return rockVariants[variantIndex];
             case TileType.GiantRock:
                 return tiles[5];
             case TileType.WaterBody:
                 return tiles[6];
+            case TileType.WoodenCabin:
+                return woodenCabinVariants[variantIndex];
             default:
                 return null;
         }

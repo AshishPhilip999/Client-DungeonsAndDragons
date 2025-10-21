@@ -26,6 +26,7 @@ public class WorldData
         {
             Vector3 tilePos = new Vector3(tile.PosX, tile.PosY, 0);
             string hashCode = PlayerView.getVector3HashCode(tilePos);
+            Debug.Log("[WorldData:: addToTerrainData] tile variant index: " + tile.Variant);
 
             worldTileData[hashCode] = tile;
         }
