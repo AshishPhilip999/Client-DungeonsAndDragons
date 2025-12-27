@@ -26,11 +26,11 @@ namespace DnD.Service {
           string.Concat(
             "ChNDbGllbnRSZXF1ZXN0LnByb3RvEgtEbkQuc2VydmljZSJVCg1DbGllbnRS",
             "ZXF1ZXN0Ei8KB3JlcVR5cGUYASABKA4yHi5EbkQuc2VydmljZS5DbGllbnRS",
-            "ZXF1ZXN0VHlwZRITCgtyZXF1ZXN0RGF0YRgCIAEoDCpsChFDbGllbnRSZXF1",
+            "ZXF1ZXN0VHlwZRITCgtyZXF1ZXN0RGF0YRgCIAEoDCp+ChFDbGllbnRSZXF1",
             "ZXN0VHlwZRIVChFDTElFTlRfQ09OTkVDVElPThAAEhgKFENMSUVOVF9ESVND",
             "T05ORUNUSU9OEAESEwoPVElMRV9HRU5FUkFUSU9OEAISEQoNQ0xJRU5UX1VQ",
-            "REFURRADQiYKC0RuRC5zZXJ2aWNlQhdDbGllbnRSZXF1ZXN0T3V0ZXJDbGFz",
-            "c2IGcHJvdG8z"));
+            "REFURRADEhAKDE5QQ19JTlNUQU5DRRAEQiYKC0RuRC5zZXJ2aWNlQhdDbGll",
+            "bnRSZXF1ZXN0T3V0ZXJDbGFzc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::DnD.Service.ClientRequestType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -46,6 +46,7 @@ namespace DnD.Service {
     [pbr::OriginalName("CLIENT_DISCONNECTION")] ClientDisconnection = 1,
     [pbr::OriginalName("TILE_GENERATION")] TileGeneration = 2,
     [pbr::OriginalName("CLIENT_UPDATE")] ClientUpdate = 3,
+    [pbr::OriginalName("NPC_INSTANCE")] NpcInstance = 4,
   }
 
   #endregion

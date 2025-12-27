@@ -1,5 +1,6 @@
 using UnityEngine;
 using DnD.Service;
+using DnD.NPCs;
 using DnD.Player;
 using Google.Protobuf;
 using System.Linq;
@@ -40,6 +41,24 @@ public class ServerResponseHandler
                     ServerConnectivityInstance.clientsHandler.updatePlayerData(client);
                 });
                 return;
+
+            case ServerResponseType.NpcInstance:
+                MainThreadDispatch.RunOnMainThread(() =>
+                {
+                    NPCData npcData = NPCData.Parser.ParseFrom(response.ResponseData);
+                    Debug.Log("[ServerResponseHandler:: handleResponse] Received NPC Instance update");
+                    ServerConnectivityInstance.clientsHandler.addNPC(npcData);
+                });
+                return;
+
+            case ServerResponseType.NpcUpdate:
+                MainThreadDispatch.RunOnMainThread(() =>
+                {
+                    NPCData npcData = NPCData.Parser.ParseFrom(response.ResponseData);
+                    Debug.Log("[ServerResponseHandler:: handleResponse] Updating NPC Instance");
+                    ServerConnectivityInstance.clientsHandler.updateNPC(npcData);
+                });
+                return;
         }
     }
 
@@ -54,7 +73,8 @@ public class ServerResponseHandler
         foreach (Dnd.Terrain.Terrain terrain in terrains)
         {
             Debug.LogWarning("[Server Response Handler] Getting terrain at " + "x:" + terrain.PosX + ", y:" + terrain.PosY);
-            WorldData.addToTerrainData(terrain);
+            WorldData.addToTerrainDataNew(terrain);
+            //WorldData.addToTerrainData(terrain);
 
             localPlayerTerrainData.ExistingTerrainPositions.Add(terrain.PosX);
             localPlayerTerrainData.ExistingTerrainPositions.Add(terrain.PosY);

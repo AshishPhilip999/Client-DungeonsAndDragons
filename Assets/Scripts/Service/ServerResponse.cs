@@ -26,12 +26,12 @@ namespace DnD.Service {
           string.Concat(
             "ChRTZXJ2ZXJSZXNwb25zZS5wcm90bxILRG5ELnNlcnZpY2UiWQoOU2VydmVy",
             "UmVzcG9uc2USMQoIcmVzcG9uc2UYASABKA4yHy5EbkQuc2VydmljZS5TZXJ2",
-            "ZXJSZXNwb25zZVR5cGUSFAoMcmVzcG9uc2VEYXRhGAIgASgMKo4BChJTZXJ2",
+            "ZXJSZXNwb25zZVR5cGUSFAoMcmVzcG9uc2VEYXRhGAIgASgMKrABChJTZXJ2",
             "ZXJSZXNwb25zZVR5cGUSFgoSQ09OTkVDVElPTl9TVUNDRVNTEAASFgoSQ09O",
             "TkVDVElPTl9GQUlMVVJFEAESFwoTQ0xJRU5UX0RJU0NPTk5FQ1RFRBACEhwK",
             "GFRJTEVfR0VORVJBVElPTl9SRVNQT05TRRADEhEKDVBMQVlFUl9VUERBVEUQ",
-            "BEInCgtEbkQuc2VydmljZUIYU2VydmVyUmVzcG9uc2VPdXRlckNsYXNzYgZw",
-            "cm90bzM="));
+            "BBIQCgxOUENfSU5TVEFOQ0UQBRIOCgpOUENfVVBEQVRFEAZCJwoLRG5ELnNl",
+            "cnZpY2VCGFNlcnZlclJlc3BvbnNlT3V0ZXJDbGFzc2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::DnD.Service.ServerResponseType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -48,6 +48,8 @@ namespace DnD.Service {
     [pbr::OriginalName("CLIENT_DISCONNECTED")] ClientDisconnected = 2,
     [pbr::OriginalName("TILE_GENERATION_RESPONSE")] TileGenerationResponse = 3,
     [pbr::OriginalName("PLAYER_UPDATE")] PlayerUpdate = 4,
+    [pbr::OriginalName("NPC_INSTANCE")] NpcInstance = 5,
+    [pbr::OriginalName("NPC_UPDATE")] NpcUpdate = 6,
   }
 
   #endregion
