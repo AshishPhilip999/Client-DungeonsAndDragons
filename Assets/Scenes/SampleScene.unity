@@ -1123,7 +1123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
-  viewDistance: 24
+  viewDistance: 9
   playerView: {fileID: 836440386}
 --- !u!50 &836440391
 Rigidbody2D:

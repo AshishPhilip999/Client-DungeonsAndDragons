@@ -4,7 +4,7 @@ public class ServerDetails
 {
     public static string serverIPAddress
     {
-        get { return "192.168.1.9"; }
+        get { return "127.0.0.1"; }
     }
 
     public static int serverPort

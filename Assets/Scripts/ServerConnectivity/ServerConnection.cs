@@ -35,7 +35,11 @@ public class ServerConnection
         try
         {
             this.playerObject = playerObject;
-            this.localClient = new TcpClient(this.serverIPAddress, this.serverPort);
+            this.localClient = new TcpClient(AddressFamily.InterNetwork);
+            Debug.Log("Created TcpClient, now connecting...");
+            this.localClient.Connect(ServerDetails.serverIPAddress, ServerDetails.serverPort);
+            Debug.Log("Connected successfully!");
+            //this.localClient = new TcpClient(this.serverIPAddress, this.serverPort);
 
             ClientRequest clientRequest = new ClientRequest();
             clientRequest.ReqType = ClientRequestType.ClientConnection;
