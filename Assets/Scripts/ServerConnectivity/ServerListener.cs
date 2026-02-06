@@ -20,65 +20,63 @@ public class ServerListener
     private static void startListening(NetworkStream stream)
     {
         Debug.Log("[Server Listener] Started Listening");
-        if(stream != null)
+
+        while (true)
         {
-            while (true)
+            try
             {
-                try
+                // 1️⃣ Read length
+                byte[] lengthBuffer = new byte[4];
+                if (!ReadExact(stream, lengthBuffer, 4))
                 {
-                    Debug.Log("[Server Listener] Reading 4 bytes");
-                    byte[] lengthBuffer = new byte[4];
-                    int read = stream.Read(lengthBuffer, 0, 4);
-
-                    if (read == 0)
-                    {
-                        Debug.Log("[Server Listener] Disconnected from server");
-                        break;
-                    }
-
-                    if (read < 4)
-                    {
-                        Debug.LogError("[Server Listener] Failed to read message length");
-                    }
-
-                    Array.Reverse(lengthBuffer);
-                    int messageLength = BitConverter.ToInt32(lengthBuffer, 0);
-                    if (messageLength <= 0)
-                    {
-                        Debug.LogError("[Server Listener] Invalid Message length");
-                    }
-
-                    byte[] messageBuffer = new byte[messageLength];
-                    int totalRead = 0;
-                    while (totalRead < messageLength)
-                    {
-                        int bytesRead = stream.Read(messageBuffer, totalRead, messageLength - totalRead);
-                        if (bytesRead == 0)
-                        {
-                            Debug.LogError("[Server Listener] Disconnected from server while reading message");
-                            break;
-                        }
-                        totalRead += bytesRead;
-                    }
-
-                    if (totalRead == messageLength)
-                    {
-                        ServerResponse serverResponse = ServerResponse.Parser.ParseFrom(messageBuffer);
-                        Debug.Log("[Server Listener] Received response from server of type: " + serverResponse.Response.ToString());
-
-                        ServerResponseHandler.handleResponse(serverResponse);
-                    } else
-                    {
-                        Debug.Log("[Server Listener] Total Read is not equal to messageLength");
-                    }
-
-                } catch(Exception e)
-                {
-                    Debug.LogError("[Server Listener] " + e);
+                    Debug.Log("[Server Listener] Disconnected");
+                    break;
                 }
+
+                Array.Reverse(lengthBuffer); // Java → C#
+                int messageLength = BitConverter.ToInt32(lengthBuffer, 0);
+
+                if (messageLength < 0)
+                {
+                    Debug.LogError("[Server Listener] Invalid message length: " + messageLength);
+                    break;
+                }
+
+                // 2️⃣ Read message
+                byte[] messageBuffer = new byte[messageLength];
+                if (!ReadExact(stream, messageBuffer, messageLength))
+                {
+                    Debug.Log("[Server Listener] Disconnected while reading message");
+                    break;
+                }
+
+                // 3️⃣ Parse protobuf
+                ServerResponse response = ServerResponse.Parser.ParseFrom(messageBuffer);
+                Debug.Log("[Server Listener] Received: " + response.Response);
+
+                ServerResponseHandler.handleResponse(response);
             }
-        } else {
-            Debug.LogError("[Server Listener] Network Stream is null");
+            catch (Exception e)
+            {
+                Debug.LogError("[Server Listener] " + e);
+                break;
+            }
         }
     }
+
+    private static bool ReadExact(NetworkStream stream, byte[] buffer, int length)
+    {
+        int offset = 0;
+        while (offset < length)
+        {
+            int read = stream.Read(buffer, offset, length - offset);
+            if (read == 0)
+                return false; // disconnected
+
+            offset += read;
+        }
+        return true;
+    }
+
+
 }

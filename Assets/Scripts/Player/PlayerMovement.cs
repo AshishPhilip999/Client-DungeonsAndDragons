@@ -35,6 +35,11 @@ public class PlayerMovement : MonoBehaviour
         {
             playerView.enabled = true;
         }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ClientRequestHandler.getNPCInstance();
+        }
     }
 
     // Update is called once per frame

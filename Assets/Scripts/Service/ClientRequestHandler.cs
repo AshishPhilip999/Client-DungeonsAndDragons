@@ -58,4 +58,18 @@ public class ClientRequestHandler
 
         sendRequest(request);
     }
+
+    public static void getNPCInstance()
+    {
+        Debug.Log("[Client Request Handler] Getting NPC Data");
+        ClientRequest request = new ClientRequest();
+        request.ReqType = ClientRequestType.NpcInstance;
+
+        Client client = ServerConnectivityInstance.service.localGameCLient;
+
+        byte[] clientData = client.ToByteArray();
+        request.RequestData = ByteString.CopyFrom(clientData);
+
+        sendRequest(request);
+    }
 }

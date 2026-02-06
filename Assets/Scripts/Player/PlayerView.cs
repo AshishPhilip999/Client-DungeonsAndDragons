@@ -3,7 +3,7 @@ using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
 using System.Linq;
 using Dnd.Terrain;
-using System.Reflection;
+using System;
 
 public class PlayerView : MonoBehaviour
 {
@@ -216,7 +216,8 @@ public class PlayerView : MonoBehaviour
             List<GameObject> tileObjects = new List<GameObject>();
 
             string hashCode = getVector3HashCode(tileData);
-            Tile tile = WorldData.worldTileData[hashCode];
+            //Tile tile = WorldData.worldTileData[hashCode];
+            Tile tile = WorldData.getTile(tileData.x, tileData.y);
             int variantIndex = tile.Variant;
 
             GameObject instanceTile = getTileFromTileType(tile.Type, variantIndex);
@@ -276,7 +277,8 @@ public class PlayerView : MonoBehaviour
                 List<GameObject> tileObjects = new List<GameObject>();
 
                 string hashCode = getVector3HashCode(viewData[i, j]);
-                Tile tileData = WorldData.worldTileData[hashCode];
+                //Tile tileData = WorldData.worldTileData[hashCode];
+                Tile tileData = WorldData.getTile(viewData[i, j].x, viewData[i, j].y);
                 int variantIndex = tileData.Variant;
 
                 GameObject instanceTile = getTileFromTileType(tileData.Type, variantIndex);
@@ -376,5 +378,29 @@ public class PlayerView : MonoBehaviour
     public static string getVector3HashCode(Vector3 v)
     {
         return $"{v.x:F4},{v.y:F4},{v.z:F4}";
+    }
+
+    public static int getVector2IntKey(float posX, float posY)
+    {
+        int x = (int)MathF.Round(posX);
+        int y = (int)MathF.Round(posY);
+
+        return (x << 16) ^ (y & 0xFFFF);
+    }
+
+    public static float RoundToMargin(float x)
+    {
+        return MathF.Round(
+            x / (50 * 2f),
+            MidpointRounding.AwayFromZero
+        ) * (50 * 2f);
+    }
+
+    public static float[] GetCurrentTerrainPos(float posX, float posY)
+    {
+        float terrainPosX = RoundToMargin(posX);
+        float terrainPosY = RoundToMargin(posY);
+
+        return new float[] { terrainPosX, terrainPosY };
     }
 }

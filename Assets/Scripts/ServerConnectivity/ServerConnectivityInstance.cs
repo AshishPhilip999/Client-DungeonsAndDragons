@@ -5,6 +5,7 @@ using Google.Protobuf;
 public class ServerConnectivityInstance : MonoBehaviour
 {
     public GameObject defaultPlayer;
+    public GameObject defaulyNPCPlaceHolder;
 
     public static ServerConnection service;
     public static Transform player;
@@ -27,6 +28,7 @@ public class ServerConnectivityInstance : MonoBehaviour
 
         clientsHandler = new ClientsHandler();
         clientsHandler.defaultPlayerPlaceHolder = defaultPlayer;
+        clientsHandler.defaulyNPCPlaceHolder = defaulyNPCPlaceHolder;
 
         ServerListener.Listen(serverConnection.netWorkStream);
     }

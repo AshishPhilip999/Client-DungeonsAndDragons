@@ -8,9 +8,59 @@ public class WorldData
 {
     public static List<Dnd.Terrain.Terrain> terrainData = new List<Dnd.Terrain.Terrain>();
 
+    public static Dictionary<float, Dictionary<float, Dnd.Terrain.Terrain>> worldTerrainXMap = new Dictionary<float, Dictionary<float, Dnd.Terrain.Terrain>>();
+
     public static Dictionary<string, Tile> worldTileData = new Dictionary<string, Tile>();
 
     public static bool tilesPopulated = false;
+
+    public static Dnd.Terrain.Tile getTile(float posX, float posY)
+    {
+        float[] terrainPos = PlayerView.GetCurrentTerrainPos(posX, posY);
+        Dictionary<float, Dnd.Terrain.Terrain> terrainYMap;
+        if (worldTerrainXMap.TryGetValue(terrainPos[0], out terrainYMap))
+        {
+            Debug.Log("Found in X: ");
+            Dnd.Terrain.Terrain existinTerrain;
+            if (terrainYMap.TryGetValue(terrainPos[1], out existinTerrain))
+            {
+                int posKey = PlayerView.getVector2IntKey(posX, posY);
+                Debug.Log("posKey: " + posKey);
+                return existinTerrain.TilePosDataMap[posKey];
+            }
+        }
+
+        Debug.LogError("[WorldData::getTile] Could not find terrain data for posX:" + posX + ", posY:" + posY);
+        return null;
+    }
+
+    public static void addToTerrainDataNew(Dnd.Terrain.Terrain terrain)
+    {
+        Dictionary<float, Dnd.Terrain.Terrain> terrainYMap;
+        if (worldTerrainXMap.TryGetValue(terrain.PosX, out terrainYMap))
+        {
+            Dnd.Terrain.Terrain existinTerrain;
+            if (!terrainYMap.TryGetValue(terrain.PosY, out existinTerrain))
+            {
+                Debug.LogWarning("[WorldData::addToTerrainDataNew] Inserted Y");
+                terrainYMap[terrain.PosY] = terrain;
+                worldTerrainXMap[terrain.PosX] = terrainYMap;
+
+            } else
+            {
+                Debug.LogError("[WorldData::addToTerrainDataNew] Duplicate insert of world data");
+                return;
+            }
+        } else
+        {
+            Debug.LogWarning("[WorldData::addToTerrainDataNew] Inserted X and Y");
+            terrainYMap = new Dictionary<float, Dnd.Terrain.Terrain>();
+            terrainYMap[terrain.PosY] = terrain;
+            worldTerrainXMap[terrain.PosX] = terrainYMap;
+        }
+
+        Debug.LogWarning("[World Data] Terrain Added. x:" + terrain.PosX + ", y:" + terrain.PosY);
+    }
 
     public static void addToTerrainData(Dnd.Terrain.Terrain terrain)
     {

@@ -19,6 +19,6 @@ public class LampController : MonoBehaviour
         // Apply rotation (only around Z axis for 2D)
         lamp.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
-        Debug.Log("[LampController] Angle: " + direction);
+        //Debug.Log("[LampController] Angle: " + direction);
     }
 }
