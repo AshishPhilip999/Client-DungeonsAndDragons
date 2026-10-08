@@ -1,406 +1,265 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
 using System.Linq;
 using Dnd.Terrain;
-using System;
 
-public class PlayerView : MonoBehaviour
+public class PlayerView : MonoBehaviour, PlayerViewHandler
 {
     public Transform playerPosition;
     public int viewDistance;
-    public GameObject tile;
-    public float tileSize;
 
-    public int direction = 1; // Should make it a set of only -1 and 1
+    public GameObject tile;
 
     public List<GameObject> tiles;
-
     public List<GameObject> standardTreeVariants;
     public List<GameObject> standardGrassVariants;
     public List<GameObject> rockVariants;
     public List<GameObject> woodenCabinVariants;
 
-    private Vector3[,] playerViewPosData;
+    public ViewDistanceController viewDistanceController;
+
+    private Vector2Int[,] playerViewPosData;
+    public List<Vector2Int> currentAddTiles = new List<Vector2Int>();
+
+    private Dictionary<Vector2Int, List<GameObject>> viewPositionObjects;
 
     public int viewLengthX;
     public int viewLengthY;
 
-    private Dictionary<string, List<GameObject>> viewPositionObjects;
+    public int direction = 1;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        viewPositionObjects = new Dictionary<string, List<GameObject>>();
-        viewLengthX = (int)(((viewDistance / tileSize) + 1) * 2) - 1;
-        viewLengthY = (int)(((viewDistance / tileSize) + 1) * 2) - 1;
-        playerViewPosData = new Vector3[viewLengthX, viewLengthY];
+        viewPositionObjects = new Dictionary<Vector2Int, List<GameObject>>();
 
-        playerViewPosData = populateViewData(transform.position);
-        generateTiles(this.playerViewPosData);
+        viewDistance = viewDistanceController.viewDistance;
+
+        viewLengthX = viewDistance * 2;
+        viewLengthY = viewDistance * 2;
+
+        playerViewPosData = PopulateViewData(playerPosition.position);
+        currentAddTiles = Flatten(playerViewPosData);
+        Debug.Log("[PlayerView:: Start] CurrentTileCount: " + currentAddTiles.Count);
+        fetchTilesFromServer(playerPosition.position, currentAddTiles);
     }
 
-    public void updateTiles(Vector3 playerPosition, int direction)
+    // =========================
+    // GRID GENERATION (INT BASED)
+    // =========================
+    private Vector2Int[,] PopulateViewData(Vector3 playerPos)
     {
-        this.direction = direction;
-        Vector3[,] newViewData = populateViewData(playerPosition);
-        if (isSameViewData(newViewData, playerViewPosData))
+        int baseX = Mathf.RoundToInt(playerPos.x);
+        int baseY = Mathf.RoundToInt(playerPos.y);
+
+        int range = Mathf.CeilToInt(viewDistance);
+
+        Vector2Int[,] data = new Vector2Int[viewLengthX, viewLengthY];
+
+        for (int i = 0; i < viewLengthX; i++)
         {
-            Debug.Log("[Player View] Same view data generated");
-            return;
-        }
-        List<Vector3> newTiles = getDifference(newViewData, playerViewPosData);
-        List<Vector3> oldTiles = getDifference(playerViewPosData, newViewData);
-
-        playerViewPosData = newViewData;
-
-        createTiles(newTiles);
-        removeTiles(oldTiles);
-    }
-
-    private static bool isSameViewData(Vector3[,] a, Vector3[,] b)
-    {
-        if (a == null || b == null)
-            return false;
-
-        if (a.GetLength(0) != b.GetLength(0) || a.GetLength(1) != b.GetLength(1))
-            return false;
-
-        for (int i = 0; i < a.GetLength(0); i++)
-        {
-            for (int j = 0; j < a.GetLength(1); j++)
+            for (int j = 0; j < viewLengthY; j++)
             {
-                if (a[i, j] != b[i, j])
-                    return false;
+                int x = baseX - range + i;
+                int y = baseY + range - j;
+
+                data[i, j] = new Vector2Int(x, y);
             }
         }
 
-        return true;
+        return data;
     }
 
-    private Vector3[,] populateViewData(Vector3 playerPosition)
+    private static List<Vector2Int> Flatten(Vector2Int[,] arr)
     {
-        Vector3[,] viewPositionData = new Vector3[viewLengthX, viewLengthY];
-        float[] roundOfPosition = roundOfPlayerPosition(playerPosition);
-        //Debug.Log(roundOfPosition[0] + "," + roundOfPosition[1]);
-        float currXPos = roundOfPosition[0] - viewDistance;
-        float currYPos = roundOfPosition[1] + viewDistance;
-
-        for(int i = 0; i < viewPositionData.GetLength(0); i++)
-        {
-            for(int j = 0; j < viewPositionData.GetLength(1); j++)
-            {
-                viewPositionData[i, j] = new Vector3(currXPos, currYPos, 0);
-                currXPos += tileSize;
-            }
-            currYPos -= tileSize;
-            currXPos = roundOfPosition[0] - viewDistance;
-        }
-        return viewPositionData;
-    }
-
-    private float[] roundOfPlayerPosition(Vector3 playerPosition)
-    {
-        float roundOfX = -1;
-        float roundOfY = -1;
-
-        float posX = playerPosition.x;
-        float posY = playerPosition.y;
-
-        bool isXNeg = (posX < 0) ? true : false;
-        bool isYNeg = (posY < 0) ? true : false;
-
-        float absPosX = Mathf.Abs(posX);
-        float absPosY = Mathf.Abs(posY);
-
-        int currRoundOfX = Mathf.Abs((int)posX);
-        int currRoundOfY = Mathf.Abs((int)posY);
-
-        for(float i = currRoundOfX; i <= currRoundOfX + 1; i += tileSize)
-        {
-            if(i > absPosX)
-            {
-                float currRoundOfXLength = i - absPosX;
-
-                float prevRoundOfX = i - tileSize;
-
-                float prevRoundOfXLength = absPosX - prevRoundOfX;
-
-                if (currRoundOfXLength < prevRoundOfXLength)
-                {
-                    roundOfX = i;
-                } else
-                {
-                    roundOfX = prevRoundOfX;
-                }
-                break;
-
-            } else if (i == absPosX)
-            {
-                roundOfX = i;
-                break;
-            }
-        }
-
-        for (float i = currRoundOfY; i <= currRoundOfY + 1; i += tileSize)
-        {
-            if (i > absPosY)
-            {
-                float currRoundOfYLength = i - absPosY;
-
-                float prevRoundOfY = i - tileSize;
-
-                float prevRoundOfYLength = absPosY - prevRoundOfY;
-
-                if (currRoundOfYLength < prevRoundOfYLength)
-                {
-                    roundOfY = i;
-                }
-                else
-                {
-                    roundOfY = prevRoundOfY;
-                }
-                break;
-
-            }
-            else if (i == absPosY)
-            {
-                roundOfY = i;
-                break;
-            }
-        }
-
-        if (roundOfX == -1 || roundOfY == -1) { Debug.LogError("[Player View] Error calculating round of Values"); }
-
-        if (isXNeg) { roundOfX *= -1; }
-        if (isYNeg) { roundOfY *= -1; }
-
-        return new float[] { roundOfX, roundOfY };
-    }
-
-    public static List<Vector3> getDifference(Vector3[,] arr1, Vector3[,] arr2)
-    {
-        List<Vector3> arr1Flat = flattern(arr1);
-        List<Vector3> arr2Flat = flattern(arr2);
-
-        return arr1Flat.Where(v1 => !arr2Flat.Any(v2 => v1 == v2)).ToList();
-    }
-
-    private static List<Vector3> flattern(Vector3[,] arr)
-    {
-        var result = new List<Vector3>();
+        var result = new List<Vector2Int>();
         foreach (var item in arr)
             result.Add(item);
         return result;
     }
 
-    public int topOrderInLayer = 0;
-    public int bottomOrderInLayer = 0;
-    private void createTiles(List<Vector3> newTiles)
+    public static List<Vector2Int> GetDifference(Vector2Int[,] a, Vector2Int[,] b)
     {
-        int currentApplyLayer = 0;
-        if (direction == -1 )
-        {
-            topOrderInLayer--;
-            bottomOrderInLayer--;
-            currentApplyLayer = topOrderInLayer;
-        } else if (direction == 1)
-        {
-            topOrderInLayer++;
-            bottomOrderInLayer++;
-            currentApplyLayer = bottomOrderInLayer;
-        }
+        var aFlat = Flatten(a);
+        var bFlat = Flatten(b);
 
-        foreach(Vector3 tileData in newTiles)
-        {
-            List<GameObject> tileObjects = new List<GameObject>();
-
-            string hashCode = getVector3HashCode(tileData);
-            //Tile tile = WorldData.worldTileData[hashCode];
-            Tile tile = WorldData.getTile(tileData.x, tileData.y);
-            int variantIndex = tile.Variant;
-
-            GameObject instanceTile = getTileFromTileType(tile.Type, variantIndex);
-            GameObject newTile = Instantiate(instanceTile, new Vector3(tileData.x, tileData.y, 0), Quaternion.identity);
-            newTile.transform.position += new Vector3(tile.TileOffSetX, tile.TileOffSetY, 0);
-
-            newTile.isStatic = true;
-            newTile.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(tileData.y);
-            TileSpawnPositioner tileSpawnPositioner = newTile.GetComponent<TileSpawnPositioner>();
-            if (tileSpawnPositioner != null)
-            {
-                for (int index = 0; index < tile.SpawnPositionIndicies.Count; index++)
-                {
-                    int spawnObjectIndex = tile.SpawnPositionObjects[index];
-                    int spawnPositionIndex = tile.SpawnPositionIndicies[index];
-                    GameObject currSpawnObject = Instantiate(tileSpawnPositioner.spawnPositionObjects[spawnObjectIndex],
-                        tileSpawnPositioner.spawnPositions[spawnPositionIndex].transform.position, Quaternion.identity);
-                    currSpawnObject.GetComponent<SpriteRenderer>().sortingOrder = newTile.GetComponent<SpriteRenderer>().sortingOrder + 1;
-                    tileSpawnPositioner.objectsSpawned.Add(currSpawnObject);
-                    currSpawnObject.transform.SetParent(newTile.transform, true);
-                }
-            }
-
-            if (tile.Type != TileType.LightPatchGrass )
-            {
-                GameObject grass = getTileFromTileType(TileType.LightPatchGrass, 0);
-                GameObject instanceGrass = Instantiate(grass, new Vector3(tileData.x, tileData.y, 0), Quaternion.identity);
-                instanceGrass.isStatic = true;
-                instanceGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(tileData.y);
-                tileObjects.Add(instanceGrass);
-            }
-
-            tileObjects.Add(newTile);
-
-            addToViewPositionObjects(tileData, tileObjects);            
-        }
+        return aFlat.Where(v => !bFlat.Contains(v)).ToList();
     }
 
-    private void removeTiles(List<Vector3> oldTiles)
+    // =========================
+    // UPDATE FLOW
+    // =========================
+    public void fetchAndUpdateTiles(Vector3 playerPos, int direction)
     {
-        foreach (Vector3 tileData in oldTiles)
+        this.direction = direction;
+
+        var newViewData = PopulateViewData(playerPos);
+
+        var newTiles = GetDifference(newViewData, playerViewPosData);
+        var oldTiles = GetDifference(playerViewPosData, newViewData);
+
+        Debug.Log("[PlayerView:: fetchAndUpdateTiles] New required tiles: " + newTiles.Count);
+
+        currentAddTiles = newTiles;
+
+        fetchTilesFromServer(playerPos, newTiles);
+
+        playerViewPosData = newViewData;
+
+        removeTiles(oldTiles);
+    }
+
+    // =========================
+    // SERVER FETCH
+    // =========================
+    public void fetchTilesFromServer(Vector3 playerPos, List<Vector2Int> tiles)
+    {
+        // Your networking call here
+         ClientRequestHandler.getTilesData(playerPos.x, playerPos.y, tiles);
+    }
+
+    // =========================
+    // CREATE TILES (MAIN THREAD)
+    // =========================
+    private List<Vector2Int> missedTiles = new List<Vector2Int>();
+    public void createTiles(List<Vector2Int> currTiles)
+    {
+        foreach (Vector2Int tilePos in currTiles)
         {
-            foreach(GameObject obj in getObjectFromViewPositionObjectsMap(tileData))
+            Debug.Log("[PlayerView:: createTiles] Fetching tile data of tile posX: " + tilePos.x + ", posY: " + tilePos.y);
+
+            Tile tile = WorldData.getTileFromWorld(tilePos.x, tilePos.y);
+            if (tile != null)
             {
-                Destroy(obj);
+                createTile(tile, tilePos);
+            } else
+            {
+                Debug.LogError("[PlayerView:: createTiles] Can't find tile of posX: " + tilePos.x + ", posY: " + tilePos.y);
+                missedTiles.Add(tilePos);
             }
-            removeFromViewPositionObjects(tileData);
+            
         }
     }
 
-    private void generateTiles(Vector3[,] viewData)
+    private void createTile(Tile tile, Vector2Int tilePos)
     {
-        for(int i = 0; i < viewLengthY; i++)
+        List<GameObject> tileObjects = new List<GameObject>();
+
+        GameObject prefab = getTileFromTileType(tile.Type, tile.Variant);
+
+        Vector3 worldPos = new Vector3(tile.PosX, tile.PosY, 0);
+
+        GameObject newTile = Instantiate(prefab, worldPos, Quaternion.identity);
+        newTile.transform.position += new Vector3(tile.TileOffSetX, tile.TileOffSetY, 0);
+        newTile.isStatic = true;
+
+        TileSpawnPositioner tsp = newTile.GetComponent<TileSpawnPositioner>();
+
+        if (tsp != null)
         {
-            for(int j = 0; j < viewLengthX; j++)
+            for (int i = 0; i < tile.SpawnPositionIndicies.Count; i++)
             {
-                List<GameObject> tileObjects = new List<GameObject>();
+                int objIndex = tile.SpawnPositionObjects[i];
+                int posIndex = tile.SpawnPositionIndicies[i];
 
-                string hashCode = getVector3HashCode(viewData[i, j]);
-                //Tile tileData = WorldData.worldTileData[hashCode];
-                Tile tileData = WorldData.getTile(viewData[i, j].x, viewData[i, j].y);
-                int variantIndex = tileData.Variant;
+                GameObject obj = Instantiate(
+                    tsp.spawnPositionObjects[objIndex],
+                    tsp.spawnPositions[posIndex].transform.position,
+                    Quaternion.identity
+                );
 
-                GameObject instanceTile = getTileFromTileType(tileData.Type, variantIndex);
-
-                Debug.Log(viewData[i, j].x + "," + viewData[i, j].y);
-                GameObject currTile = Instantiate(instanceTile, viewData[i,j] , Quaternion.identity);
-                currTile.transform.position += new Vector3(tileData.TileOffSetX, tileData.TileOffSetY, 0);
-
-                TileSpawnPositioner tileSpawnPositioner = currTile.GetComponent<TileSpawnPositioner>();
-                currTile.isStatic = true;
-                currTile.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(viewData[i, j].y);
-                if (tileSpawnPositioner != null)
-                {
-                    for (int index = 0; index < tileData.SpawnPositionIndicies.Count; index++)
-                    {
-                        int spawnObjectIndex = tileData.SpawnPositionObjects[index];
-                        int spawnPositionIndex = tileData.SpawnPositionIndicies[index];
-                        GameObject currSpawnObject = Instantiate(tileSpawnPositioner.spawnPositionObjects[spawnObjectIndex],
-                            tileSpawnPositioner.spawnPositions[spawnPositionIndex].transform.position, Quaternion.identity);
-                        currSpawnObject.GetComponent<SpriteRenderer>().sortingOrder = currTile.GetComponent<SpriteRenderer>().sortingOrder + 1;
-                        tileSpawnPositioner.objectsSpawned.Add(currSpawnObject);
-                        currSpawnObject.transform.SetParent(currTile.transform, true);
-                    }
-                }
-
-                if (tileData.Type != TileType.LightPatchGrass)
-                {
-                    GameObject grass = getTileFromTileType(TileType.LightPatchGrass, 0);
-                    GameObject instanceGrass = Instantiate(grass, viewData[i, j], Quaternion.identity);
-                    instanceGrass.isStatic = true;
-                    instanceGrass.GetComponent<SpriteRenderer>().sortingOrder = getSortingOrderByPosition(viewData[i, j].y); ;
-                    tileObjects.Add(instanceGrass);
-                }
-
-                tileObjects.Add(currTile);
-
-                addToViewPositionObjects(viewData[i, j], tileObjects);
+                obj.transform.SetParent(newTile.transform, true);
+                tsp.objectsSpawned.Add(obj);
             }
-            bottomOrderInLayer++;
         }
+
+        // Add grass layer
+        if (tile.Type != TileType.LightPatchGrass)
+        {
+            GameObject grassPrefab = getTileFromTileType(TileType.LightPatchGrass, 0);
+            GameObject grass = Instantiate(grassPrefab, worldPos, Quaternion.identity);
+            grass.isStatic = true;
+
+            tileObjects.Add(grass);
+        }
+
+        tileObjects.Add(newTile);
+
+        viewPositionObjects[tilePos] = tileObjects;
     }
 
-    private int getSortingOrderByPosition(float yPos)
+    public void finishMissedTiles()
     {
-        yPos *= -1;
-        return (int)(yPos / tileSize);
+        foreach (Vector2Int tile in missedTiles)
+        {
+            Tile currTile = WorldData.getTileFromWorld(tile.x, tile.y);
+            if (tile == null)
+            {
+                continue;
+            }
+            createTile(currTile, tile);
+        }
+
     }
 
+    // =========================
+    // REMOVE TILES (SAFE)
+    // =========================
+    private void removeTiles(List<Vector2Int> oldTiles)
+    {
+        foreach (var tilePos in oldTiles)
+        {
+            WorldData.removeTileFromWorld(tilePos.x, tilePos.y);
+
+            if (viewPositionObjects.TryGetValue(tilePos, out var objects))
+            {
+                foreach (var obj in objects)
+                    Destroy(obj);
+
+                viewPositionObjects.Remove(tilePos);
+            }
+            else
+            {
+                Debug.LogWarning($"[REMOVE MISS] {tilePos}");
+            }
+        }
+        Debug.Log("World size: " + WorldData.getWorldTilesCount);
+        Debug.Log("Map size: " + viewPositionObjects.Count);
+    }
+
+    // =========================
+    // TILE PREFAB SELECTION
+    // =========================
     private GameObject getTileFromTileType(TileType tileType, int variantIndex)
     {
         switch (tileType)
         {
             case TileType.StandardGrass:
                 return standardGrassVariants[variantIndex];
+
             case TileType.LightPatchGrass:
                 return tiles[1];
+
             case TileType.DarkPatchGrass:
                 return tiles[2];
+
             case TileType.StandardTree:
                 return standardTreeVariants[variantIndex];
+
             case TileType.Rock:
                 return rockVariants[variantIndex];
+
             case TileType.GiantRock:
                 return tiles[5];
+
             case TileType.WaterBody:
                 return tiles[6];
+
             case TileType.WoodenCabin:
                 return woodenCabinVariants[variantIndex];
+
             default:
+                Debug.LogError("[PlayerView:: getTileFromTileType] cannot find tile of type");
                 return null;
         }
-    }
-
-    private List<GameObject> getObjectFromViewPositionObjectsMap(Vector3 position)
-    {
-        string hashCode = getVector3HashCode(position);
-        if (this.viewPositionObjects.TryGetValue(hashCode, out var obj)) {
-            return obj;
-        }
-
-        Debug.LogError("[Player View] Object was not found. Maybe trying to delete same object twice.");
-        return null;
-    }
-
-    private void addToViewPositionObjects(Vector3 position, List<GameObject> tile)
-    {
-        string hashCode = getVector3HashCode(position);
-        this.viewPositionObjects[hashCode] = tile;
-    }
-
-    private void removeFromViewPositionObjects(Vector3 position)
-    {
-        string hashCode = getVector3HashCode(position);
-        this.viewPositionObjects.Remove(hashCode);
-    }
-
-    public static string getVector3HashCode(Vector3 v)
-    {
-        return $"{v.x:F4},{v.y:F4},{v.z:F4}";
-    }
-
-    public static int getVector2IntKey(float posX, float posY)
-    {
-        int x = (int)MathF.Round(posX);
-        int y = (int)MathF.Round(posY);
-
-        return (x << 16) ^ (y & 0xFFFF);
-    }
-
-    public static float RoundToMargin(float x)
-    {
-        return MathF.Round(
-            x / (50 * 2f),
-            MidpointRounding.AwayFromZero
-        ) * (50 * 2f);
-    }
-
-    public static float[] GetCurrentTerrainPos(float posX, float posY)
-    {
-        float terrainPosX = RoundToMargin(posX);
-        float terrainPosY = RoundToMargin(posY);
-
-        return new float[] { terrainPosX, terrainPosY };
     }
 }

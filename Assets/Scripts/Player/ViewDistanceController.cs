@@ -9,7 +9,7 @@ public class ViewDistanceController : MonoBehaviour
 
     private void Start()
     {
-        playerView.viewDistance = viewDistance;
-        cam.orthographicSize = viewDistance * 0.42f;
+        playerView.viewDistance = viewDistance ;
+        cam.orthographicSize = viewDistance * 0.27f;
     }
 }

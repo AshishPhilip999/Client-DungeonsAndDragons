@@ -24,18 +24,20 @@ namespace DnD.Service {
     static ServerResponseReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChRTZXJ2ZXJSZXNwb25zZS5wcm90bxILRG5ELnNlcnZpY2UiWQoOU2VydmVy",
-            "UmVzcG9uc2USMQoIcmVzcG9uc2UYASABKA4yHy5EbkQuc2VydmljZS5TZXJ2",
-            "ZXJSZXNwb25zZVR5cGUSFAoMcmVzcG9uc2VEYXRhGAIgASgMKrABChJTZXJ2",
-            "ZXJSZXNwb25zZVR5cGUSFgoSQ09OTkVDVElPTl9TVUNDRVNTEAASFgoSQ09O",
-            "TkVDVElPTl9GQUlMVVJFEAESFwoTQ0xJRU5UX0RJU0NPTk5FQ1RFRBACEhwK",
-            "GFRJTEVfR0VORVJBVElPTl9SRVNQT05TRRADEhEKDVBMQVlFUl9VUERBVEUQ",
-            "BBIQCgxOUENfSU5TVEFOQ0UQBRIOCgpOUENfVVBEQVRFEAZCJwoLRG5ELnNl",
-            "cnZpY2VCGFNlcnZlclJlc3BvbnNlT3V0ZXJDbGFzc2IGcHJvdG8z"));
+            "ChRTZXJ2ZXJSZXNwb25zZS5wcm90bxILRG5ELnNlcnZpY2UaE0NsaWVudFJl",
+            "cXVlc3QucHJvdG8ijAEKDlNlcnZlclJlc3BvbnNlEjEKCHJlc3BvbnNlGAEg",
+            "ASgOMh8uRG5ELnNlcnZpY2UuU2VydmVyUmVzcG9uc2VUeXBlEhQKDHJlc3Bv",
+            "bnNlRGF0YRgCIAEoDBIxCg1jbGllbnRDb250ZXh0GAMgASgLMhouRG5ELnNl",
+            "cnZpY2UuQ2xpZW50Q29udGV4dCrDAQoSU2VydmVyUmVzcG9uc2VUeXBlEhYK",
+            "EkNPTk5FQ1RJT05fU1VDQ0VTUxAAEhYKEkNPTk5FQ1RJT05fRkFJTFVSRRAB",
+            "EhcKE0NMSUVOVF9ESVNDT05ORUNURUQQAhIcChhUSUxFX0dFTkVSQVRJT05f",
+            "UkVTUE9OU0UQAxIXChNUSUxFX0ZFVENIX1JFU1BPTlNFEAQSGgoWQ0xJRU5U",
+            "X1VQREFURV9SRVNQT05TRRAFEhEKDUNMSUVOVF9KT0lORUQQBkInCgtEbkQu",
+            "c2VydmljZUIYU2VydmVyUmVzcG9uc2VPdXRlckNsYXNzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
+          new pbr::FileDescriptor[] { global::DnD.Service.ClientRequestReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::DnD.Service.ServerResponseType), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Service.ServerResponse), global::DnD.Service.ServerResponse.Parser, new[]{ "Response", "ResponseData" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Service.ServerResponse), global::DnD.Service.ServerResponse.Parser, new[]{ "Response", "ResponseData", "ClientContext" }, null, null, null, null)
           }));
     }
     #endregion
@@ -47,9 +49,12 @@ namespace DnD.Service {
     [pbr::OriginalName("CONNECTION_FAILURE")] ConnectionFailure = 1,
     [pbr::OriginalName("CLIENT_DISCONNECTED")] ClientDisconnected = 2,
     [pbr::OriginalName("TILE_GENERATION_RESPONSE")] TileGenerationResponse = 3,
-    [pbr::OriginalName("PLAYER_UPDATE")] PlayerUpdate = 4,
-    [pbr::OriginalName("NPC_INSTANCE")] NpcInstance = 5,
-    [pbr::OriginalName("NPC_UPDATE")] NpcUpdate = 6,
+    /// <summary>
+    /// new response type for tile fetching
+    /// </summary>
+    [pbr::OriginalName("TILE_FETCH_RESPONSE")] TileFetchResponse = 4,
+    [pbr::OriginalName("CLIENT_UPDATE_RESPONSE")] ClientUpdateResponse = 5,
+    [pbr::OriginalName("CLIENT_JOINED")] ClientJoined = 6,
   }
 
   #endregion
@@ -82,6 +87,7 @@ namespace DnD.Service {
     public ServerResponse(ServerResponse other) : this() {
       response_ = other.response_;
       responseData_ = other.responseData_;
+      clientContext_ = other.clientContext_ != null ? other.clientContext_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -112,6 +118,17 @@ namespace DnD.Service {
       }
     }
 
+    /// <summary>Field number for the "clientContext" field.</summary>
+    public const int ClientContextFieldNumber = 3;
+    private global::DnD.Service.ClientContext clientContext_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::DnD.Service.ClientContext ClientContext {
+      get { return clientContext_; }
+      set {
+        clientContext_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as ServerResponse);
@@ -127,6 +144,7 @@ namespace DnD.Service {
       }
       if (Response != other.Response) return false;
       if (ResponseData != other.ResponseData) return false;
+      if (!object.Equals(ClientContext, other.ClientContext)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -135,6 +153,7 @@ namespace DnD.Service {
       int hash = 1;
       if (Response != global::DnD.Service.ServerResponseType.ConnectionSuccess) hash ^= Response.GetHashCode();
       if (ResponseData.Length != 0) hash ^= ResponseData.GetHashCode();
+      if (clientContext_ != null) hash ^= ClientContext.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -156,6 +175,10 @@ namespace DnD.Service {
         output.WriteRawTag(18);
         output.WriteBytes(ResponseData);
       }
+      if (clientContext_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(ClientContext);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -169,6 +192,9 @@ namespace DnD.Service {
       }
       if (ResponseData.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeBytesSize(ResponseData);
+      }
+      if (clientContext_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ClientContext);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -187,6 +213,12 @@ namespace DnD.Service {
       if (other.ResponseData.Length != 0) {
         ResponseData = other.ResponseData;
       }
+      if (other.clientContext_ != null) {
+        if (clientContext_ == null) {
+          ClientContext = new global::DnD.Service.ClientContext();
+        }
+        ClientContext.MergeFrom(other.ClientContext);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -204,6 +236,13 @@ namespace DnD.Service {
           }
           case 18: {
             ResponseData = input.ReadBytes();
+            break;
+          }
+          case 26: {
+            if (clientContext_ == null) {
+              ClientContext = new global::DnD.Service.ClientContext();
+            }
+            input.ReadMessage(ClientContext);
             break;
           }
         }

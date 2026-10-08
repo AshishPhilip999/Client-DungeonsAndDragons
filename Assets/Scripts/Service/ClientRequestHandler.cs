@@ -3,6 +3,8 @@ using Google.Protobuf;
 using DnD.Player;
 using DnD.Service;
 using System;
+using Generic.Geometry;
+using System.Collections.Generic;
 
 public class ClientRequestHandler
 {
@@ -16,6 +18,36 @@ public class ClientRequestHandler
         ServerConnectivityInstance.service.netWorkStream.Flush();
 
         Debug.Log("[Client Request Handler] Request sent to server");
+    }
+
+    public static void getTilesData(float posX, float posY, List<Vector2Int> tileCordinates)
+    {
+        Debug.Log("TileCount: " + tileCordinates.Count);
+        Player player = new Player();
+        player.PosX = posX;
+        player.PosY = posY;
+
+        Client client = ServerConnectivityInstance.service.localGameCLient;
+        client.Player = player;
+
+        foreach (Vector2Int vector in tileCordinates)
+        {
+            Generic.Geometry.Vector2 tile = new Generic.Geometry.Vector2();
+            tile.PosX = vector.x;
+            tile.PosY = vector.y;
+
+            client.FetchingTiles.Add(tile);
+        }
+
+        ClientRequest request = new ClientRequest();
+        request.ReqType = ClientRequestType.TilesFetch;
+        byte[] data = client.ToByteArray();
+
+        request.RequestData = ByteString.CopyFrom(data);
+
+        ServerConnectivityInstance.service.localGameCLient.FetchingTiles.Clear();
+
+        sendRequest(request);
     }
 
     public static void getTerrainData(float posX, float posY, int viewDistance)
@@ -69,6 +101,32 @@ public class ClientRequestHandler
 
         byte[] clientData = client.ToByteArray();
         request.RequestData = ByteString.CopyFrom(clientData);
+
+        sendRequest(request);
+    }
+
+    public static void updatePlayerMovementAlongX(float value, bool isFlipped)
+    {
+        Debug.Log("[Client Request Handler] Updating player movement along X");
+        ClientRequest request = new ClientRequest();
+        request.ReqType = ClientRequestType.ClientUpdate;
+        request.Client = ServerConnectivityInstance.service.localGameCLient;
+
+        ClientContext dataContext = new ClientContext()
+        {
+            PlayerUpdateType = new PlayerUpdateType()
+            {
+                PlayerTransformType = PlayerTransformType.UpdateAlongX
+            }
+        };
+
+        byte[] valueBytes = BitConverter.GetBytes(value);
+        byte[] isFlippedBytes = BitConverter.GetBytes(isFlipped);
+
+        dataContext.ClientData.Add(ByteString.CopyFrom(valueBytes));
+        dataContext.ClientData.Add(ByteString.CopyFrom(isFlippedBytes));
+
+        request.ClientContext = dataContext;
 
         sendRequest(request);
     }

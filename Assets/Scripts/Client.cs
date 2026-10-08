@@ -24,14 +24,15 @@ namespace DnD.Service {
     static ClientReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgxDbGllbnQucHJvdG8SC0RuRC5zZXJ2aWNlGgxQbGF5ZXIucHJvdG8iPgoG",
-            "Q2xpZW50EhAKCGNsaWVudElEGAMgASgJEiIKBnBsYXllchgEIAEoCzISLkRu",
-            "RC5QbGF5ZXIuUGxheWVyQh8KC0RuRC5zZXJ2aWNlQhBDbGllbnRPdXRlckNs",
-            "YXNzYgZwcm90bzM="));
+            "CgxDbGllbnQucHJvdG8SC0RuRC5zZXJ2aWNlGgxQbGF5ZXIucHJvdG8aDVZl",
+            "Y3RvcjIucHJvdG8icAoGQ2xpZW50EhAKCGNsaWVudElEGAEgASgJEiIKBnBs",
+            "YXllchgCIAEoCzISLkRuRC5QbGF5ZXIuUGxheWVyEjAKDWZldGNoaW5nVGls",
+            "ZXMYAyADKAsyGS5HZW5lcmljLkdlb21ldHJ5LlZlY3RvcjJCHwoLRG5ELnNl",
+            "cnZpY2VCEENsaWVudE91dGVyQ2xhc3NiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::DnD.Player.PlayerReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::DnD.Player.PlayerReflection.Descriptor, global::Generic.Geometry.Vector2Reflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Service.Client), global::DnD.Service.Client.Parser, new[]{ "ClientID", "Player" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::DnD.Service.Client), global::DnD.Service.Client.Parser, new[]{ "ClientID", "Player", "FetchingTiles" }, null, null, null, null)
           }));
     }
     #endregion
@@ -65,6 +66,7 @@ namespace DnD.Service {
     public Client(Client other) : this() {
       clientID_ = other.clientID_;
       player_ = other.player_ != null ? other.player_.Clone() : null;
+      fetchingTiles_ = other.fetchingTiles_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -74,7 +76,7 @@ namespace DnD.Service {
     }
 
     /// <summary>Field number for the "clientID" field.</summary>
-    public const int ClientIDFieldNumber = 3;
+    public const int ClientIDFieldNumber = 1;
     private string clientID_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public string ClientID {
@@ -85,7 +87,7 @@ namespace DnD.Service {
     }
 
     /// <summary>Field number for the "player" field.</summary>
-    public const int PlayerFieldNumber = 4;
+    public const int PlayerFieldNumber = 2;
     private global::DnD.Player.Player player_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::DnD.Player.Player Player {
@@ -93,6 +95,16 @@ namespace DnD.Service {
       set {
         player_ = value;
       }
+    }
+
+    /// <summary>Field number for the "fetchingTiles" field.</summary>
+    public const int FetchingTilesFieldNumber = 3;
+    private static readonly pb::FieldCodec<global::Generic.Geometry.Vector2> _repeated_fetchingTiles_codec
+        = pb::FieldCodec.ForMessage(26, global::Generic.Geometry.Vector2.Parser);
+    private readonly pbc::RepeatedField<global::Generic.Geometry.Vector2> fetchingTiles_ = new pbc::RepeatedField<global::Generic.Geometry.Vector2>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Generic.Geometry.Vector2> FetchingTiles {
+      get { return fetchingTiles_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -110,6 +122,7 @@ namespace DnD.Service {
       }
       if (ClientID != other.ClientID) return false;
       if (!object.Equals(Player, other.Player)) return false;
+      if(!fetchingTiles_.Equals(other.fetchingTiles_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -118,6 +131,7 @@ namespace DnD.Service {
       int hash = 1;
       if (ClientID.Length != 0) hash ^= ClientID.GetHashCode();
       if (player_ != null) hash ^= Player.GetHashCode();
+      hash ^= fetchingTiles_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -132,13 +146,14 @@ namespace DnD.Service {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
       if (ClientID.Length != 0) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(10);
         output.WriteString(ClientID);
       }
       if (player_ != null) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(18);
         output.WriteMessage(Player);
       }
+      fetchingTiles_.WriteTo(output, _repeated_fetchingTiles_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -153,6 +168,7 @@ namespace DnD.Service {
       if (player_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Player);
       }
+      size += fetchingTiles_.CalculateSize(_repeated_fetchingTiles_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -173,6 +189,7 @@ namespace DnD.Service {
         }
         Player.MergeFrom(other.Player);
       }
+      fetchingTiles_.Add(other.fetchingTiles_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -184,15 +201,19 @@ namespace DnD.Service {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 26: {
+          case 10: {
             ClientID = input.ReadString();
             break;
           }
-          case 34: {
+          case 18: {
             if (player_ == null) {
               Player = new global::DnD.Player.Player();
             }
             input.ReadMessage(Player);
+            break;
+          }
+          case 26: {
+            fetchingTiles_.AddEntriesFrom(input, _repeated_fetchingTiles_codec);
             break;
           }
         }

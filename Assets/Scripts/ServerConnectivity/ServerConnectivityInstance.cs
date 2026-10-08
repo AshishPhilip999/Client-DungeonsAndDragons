@@ -30,6 +30,9 @@ public class ServerConnectivityInstance : MonoBehaviour
         clientsHandler.defaultPlayerPlaceHolder = defaultPlayer;
         clientsHandler.defaulyNPCPlaceHolder = defaulyNPCPlaceHolder;
 
-        ServerListener.Listen(serverConnection.netWorkStream);
+
+        ServerListener serverListener = new ServerListener();
+        serverListener.responseHandler.viewHandler = player.gameObject.GetComponent<PlayerView>();
+        serverListener.Listen(serverConnection.netWorkStream);
     }
 }

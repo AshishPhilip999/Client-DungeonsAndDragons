@@ -1,0 +1,34 @@
+{
+    "name": "PlayerControls",
+    "maps": [
+        {
+            "name": "MovePosX",
+            "id": "eef97fc6-29dc-40b2-91f4-89bf36f8fd35",
+            "actions": [
+                {
+                    "name": "D",
+                    "type": "PassThrough",
+                    "id": "b5e2c52a-1b51-495a-b456-0e661fbee449",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f7daaba3-9254-45a1-8f15-963bd5596889",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "D",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

@@ -53,5 +53,8 @@ TagManager:
   - name: Opaque
     uniqueID: 3135222283
     locked: 0
+  - name: Common
+    uniqueID: 671199257
+    locked: 0
   m_RenderingLayers:
   - Default

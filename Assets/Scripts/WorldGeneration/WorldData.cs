@@ -2,6 +2,7 @@ using UnityEngine;
 using Dnd.Terrain;
 using System.Collections.Generic;
 using System.Linq;
+using Generic.Geometry;
 using Google.Protobuf.Collections;
 
 public class WorldData
@@ -12,27 +13,109 @@ public class WorldData
 
     public static Dictionary<string, Tile> worldTileData = new Dictionary<string, Tile>();
 
+    public static Dictionary<float, Dictionary<float, Tile>> worldTileXMap = new Dictionary<float, Dictionary<float, Tile>>();
+
     public static bool tilesPopulated = false;
 
-    public static Dnd.Terrain.Tile getTile(float posX, float posY)
+    public static void addTileToWolrd(Tile tile)
     {
-        float[] terrainPos = PlayerView.GetCurrentTerrainPos(posX, posY);
-        Dictionary<float, Dnd.Terrain.Terrain> terrainYMap;
-        if (worldTerrainXMap.TryGetValue(terrainPos[0], out terrainYMap))
+        float posX = tile.PosX;
+        float posY = tile.PosY;
+
+        Dictionary<float, Tile> tileMapY;
+        worldTileXMap.TryGetValue(posX, out tileMapY);
+
+        // If terrain at pos X does not exist create new Map.
+        if (tileMapY == null)
         {
-            Debug.Log("Found in X: ");
-            Dnd.Terrain.Terrain existinTerrain;
-            if (terrainYMap.TryGetValue(terrainPos[1], out existinTerrain))
+            Dictionary<float, Tile> newTileMapY = new Dictionary<float, Tile>();
+            newTileMapY[posY] = tile;
+            worldTileXMap[posX] = newTileMapY;
+            //Debug.Log("[WorldData:: getTileFromWorld] Tile added at: posX:  " + posX + ", posY: " + posY);
+        }
+        else
+        {
+            Tile currTile;
+            tileMapY.TryGetValue(posY, out currTile);
+            if (currTile != null)
             {
-                int posKey = PlayerView.getVector2IntKey(posX, posY);
-                Debug.Log("posKey: " + posKey);
-                return existinTerrain.TilePosDataMap[posKey];
+                //Debug.Log("[WorldData:: addTileToWorldData] Tile already exists");
+            }
+            else
+            {
+                tileMapY[posY] = tile;
+                //Debug.Log("[WorldData:: getTileFromWorld] Tile added at: posX:  " + posX + ", posY: " + posY);
+            }
+        }
+    }
+
+    public static Tile getTileFromWorld(float posX, float posY)
+    {
+        Dictionary<float, Tile> tileMapY = worldTileXMap[posX];
+
+        if (tileMapY == null)
+        {
+            Debug.LogError("[WorldData:: getTileFromWorld] could not find Map with tile posX: " + posX);
+            return null;
+        }
+
+        Tile tile;
+        tileMapY.TryGetValue(posY, out tile);
+        if (tile == null)
+        {
+            Debug.LogError("[WorldData:: getTileFromWorld] could not find tile at posX: " + posX + ", posY: " + posY);
+            return null;
+        }
+
+        return tile;
+    }
+
+    public static int getWorldTilesCount
+    {
+        get {
+            return worldTileXMap.Count;
+        }
+    }
+
+    public static Tile removeTileFromWorld(float posX, float posY)
+    {
+        Dictionary<float, Tile> tileMapY;
+        worldTileXMap.TryGetValue(posX, out tileMapY);
+
+        // If terrain at pos X does not exist create new Map.
+        if (tileMapY != null)
+        {
+            Tile currTile;
+            tileMapY.TryGetValue(posY, out currTile);
+            if (currTile != null)
+            {
+                tileMapY.Remove(posY);
+                return currTile;
             }
         }
 
-        Debug.LogError("[WorldData::getTile] Could not find terrain data for posX:" + posX + ", posY:" + posY);
         return null;
     }
+
+    //public static Dnd.Terrain.Tile getTile(float posX, float posY)
+    //{
+    //    float[] terrainPos = PlayerView.GetCurrentTerrainPos(posX, posY);
+    //    Dictionary<float, Dnd.Terrain.Terrain> terrainYMap;
+    //    if (worldTerrainXMap.TryGetValue(terrainPos[0], out terrainYMap))
+    //    {
+    //        Debug.Log("Found in X: ");
+    //        Dnd.Terrain.Terrain existinTerrain;
+    //        if (terrainYMap.TryGetValue(terrainPos[1], out existinTerrain))
+    //        {
+    //            int posKey = PlayerView.getVector2IntKey(posX, posY);
+    //            Debug.Log("posKey: " + posKey);
+    //            return existinTerrain.TilePosDataMap[posKey];
+    //        }
+    //    }
+
+    //    Debug.LogError("[WorldData::getTile] Could not find terrain data for posX:" + posX + ", posY:" + posY);
+    //    return null;
+    //}
 
     public static void addToTerrainDataNew(Dnd.Terrain.Terrain terrain)
     {
@@ -62,61 +145,61 @@ public class WorldData
         Debug.LogWarning("[World Data] Terrain Added. x:" + terrain.PosX + ", y:" + terrain.PosY);
     }
 
-    public static void addToTerrainData(Dnd.Terrain.Terrain terrain)
-    {
-        if (terrainExists(terrain)) { Debug.Log("[World Data] Terrain already exists"); PlayerMovement.isMoving = true; return; }
+    //public static void addToTerrainData(Dnd.Terrain.Terrain terrain)
+    //{
+    //    if (terrainExists(terrain)) { Debug.Log("[World Data] Terrain already exists"); PlayerMovement.isMoving = true; return; }
 
-        //popFarthestTerrain();
+    //    //popFarthestTerrain();
 
-        terrainData.Add(terrain);
-        Debug.LogWarning("[World Data] Terrain Added. x:" + terrain.PosX + ", y:" + terrain.PosY);
-        List<Tile> tilesdata = terrain.TileData.ToList();
+    //    terrainData.Add(terrain);
+    //    Debug.LogWarning("[World Data] Terrain Added. x:" + terrain.PosX + ", y:" + terrain.PosY);
+    //    List<Tile> tilesdata = terrain.TileData.ToList();
 
-        foreach (Tile tile in tilesdata)
-        {
-            Vector3 tilePos = new Vector3(tile.PosX, tile.PosY, 0);
-            string hashCode = PlayerView.getVector3HashCode(tilePos);
-            Debug.Log("[WorldData:: addToTerrainData] tile variant index: " + tile.Variant);
+    //    foreach (Tile tile in tilesdata)
+    //    {
+    //        Vector3 tilePos = new Vector3(tile.PosX, tile.PosY, 0);
+    //        string hashCode = PlayerView.getVector3HashCode(tilePos);
+    //        Debug.Log("[WorldData:: addToTerrainData] tile variant index: " + tile.Variant);
 
-            worldTileData[hashCode] = tile;
-        }
-        tilesPopulated = true;
-        PlayerMovement.isMoving = true;
-        Debug.Log("{" + tilesdata.First().PosX + "," + tilesdata.First().PosY + "}" + ":" + "{" + tilesdata.Last().PosX + "," + tilesdata.Last().PosY + "}");
-    }
+    //        worldTileData[hashCode] = tile;
+    //    }
+    //    tilesPopulated = true;
+    //    PlayerMovement.isMoving = true;
+    //    Debug.Log("{" + tilesdata.First().PosX + "," + tilesdata.First().PosY + "}" + ":" + "{" + tilesdata.Last().PosX + "," + tilesdata.Last().PosY + "}");
+    //}
 
-    public static void popFromTerrainData(Dnd.Terrain.Terrain terrain)
-    {
-        Dnd.Terrain.Terrain lastTerrain = terrainData.ElementAt(0);
-        terrainData.Remove(terrain);
-        removeFromWorldTileData(terrain);
+    //public static void popFromTerrainData(Dnd.Terrain.Terrain terrain)
+    //{
+    //    Dnd.Terrain.Terrain lastTerrain = terrainData.ElementAt(0);
+    //    terrainData.Remove(terrain);
+    //    removeFromWorldTileData(terrain);
 
-        Debug.LogWarning("[World Generator] Poped terrain X: " + lastTerrain.PosX + ", Y:" + lastTerrain.PosY);
-    }
+    //    Debug.LogWarning("[World Generator] Poped terrain X: " + lastTerrain.PosX + ", Y:" + lastTerrain.PosY);
+    //}
 
-    public static void popFarthestTerrain()
-    {
-        float maxDistance = 750.0f;
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+    //public static void popFarthestTerrain()
+    //{
+    //    float maxDistance = 750.0f;
+    //    GameObject player = GameObject.FindGameObjectWithTag("Player");
 
-        var terrainsToRemove = terrainData
-    .Where(terrain => Vector2.Distance(player.transform.position, new Vector2(terrain.PosX, terrain.PosY)) > maxDistance)
-    .ToList();
+    //    var terrainsToRemove = terrainData
+    //.Where(terrain => UnityEngine.Vector2.Distance(player.transform.position, new UnityEngine.Vector2(terrain.PosX, terrain.PosY)) > maxDistance)
+    //.ToList();
 
-        foreach (Dnd.Terrain.Terrain terrain in terrainsToRemove)
-        {
-            popFromTerrainData(terrain);
-        }
-    }
+    //    foreach (Dnd.Terrain.Terrain terrain in terrainsToRemove)
+    //    {
+    //        popFromTerrainData(terrain);
+    //    }
+    //}
 
-    public static void removeFromWorldTileData(Dnd.Terrain.Terrain terrain)
-    {
-        foreach(Tile tile in terrain.TileData)
-        {
-            string hashCode = PlayerView.getVector3HashCode(new Vector3(tile.PosX, tile.PosY, 0));
-            worldTileData.Remove(hashCode);
-        }
-    }
+    //public static void removeFromWorldTileData(Dnd.Terrain.Terrain terrain)
+    //{
+    //    foreach(Tile tile in terrain.TileData)
+    //    {
+    //        string hashCode = PlayerView.getVector3HashCode(new Vector3(tile.PosX, tile.PosY, 0));
+    //        worldTileData.Remove(hashCode);
+    //    }
+    //}
 
     public static bool terrainExists(Dnd.Terrain.Terrain terrain) {
         foreach(Dnd.Terrain.Terrain currTerrain in terrainData)

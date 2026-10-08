@@ -10,14 +10,19 @@ using System.Text;
 public class ServerListener
 {
     public static TerrainGenerator tg;
-    public static void Listen(NetworkStream stream)
+    public ServerResponseHandler responseHandler;
+    public ServerListener()
+    {
+        responseHandler = new ServerResponseHandler();
+    }
+    public void Listen(NetworkStream stream)
     {
         Thread listenerThread = new Thread(() => { startListening(stream); });
         listenerThread.IsBackground = true;
         listenerThread.Start();
     }
 
-    private static void startListening(NetworkStream stream)
+    private void startListening(NetworkStream stream)
     {
         Debug.Log("[Server Listener] Started Listening");
 
@@ -54,7 +59,7 @@ public class ServerListener
                 ServerResponse response = ServerResponse.Parser.ParseFrom(messageBuffer);
                 Debug.Log("[Server Listener] Received: " + response.Response);
 
-                ServerResponseHandler.handleResponse(response);
+                responseHandler.handleResponse(response);
             }
             catch (Exception e)
             {
